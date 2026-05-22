@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Pagar · Secretaría de Educación Pública · Vecnet Pay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  /* Subtly warm neutral palette — Apple-style off-whites */
+  --bg: #FAFAF8;
+  --bg-2: #F5F5F3;
+  --surface: #FFFFFF;
+  --surface-2: #F7F7F5;
+  --ink-950: #050505;
+  --ink-900: #0A0A0A;
+  --ink-800: #18181B;
+  --ink-700: #3F3F46;
+  --ink-600: #52525B;
+  --ink-500: #71717A;
+  --ink-400: #A1A1AA;
+  --ink-300: #D4D4D8;
+  --ink-200: #E7E7E4;
+  --ink-100: #F1F1EE;
+
+  --accent: #14B8A6;
+  --accent-soft: rgba(20,184,166,0.12);
+  --success: #15803D;
+  --success-soft: rgba(21,128,61,0.12);
+  --danger: #B91C1C;
+  --warn-bg: #FEF6E4;
+  --warn-fg: #92681B;
+
+  --r-input: 12px;
+  --r-card: 24px;
+  --r-cta: 14px;
+  --r-modal: 28px;
+  --r-pill: 999px;
+
+  --shadow-card:
+    0 1px 1px rgba(0,0,0,0.025),
+    0 4px 12px rgba(0,0,0,0.035),
+    0 0 0 1px rgba(0,0,0,0.04);
+  --shadow-elevated:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 12px 32px rgba(0,0,0,0.06),
+    0 32px 96px rgba(0,0,0,0.04);
+  --shadow-button:
+    0 1px 2px rgba(0,0,0,0.18),
+    0 4px 12px rgba(0,0,0,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+  --shadow-focus: 0 0 0 4px rgba(20,184,166,0.20);
+  --shadow-inset: inset 0 1px 2px rgba(0,0,0,0.025);
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.5, 1.4, 0.6, 1);
+  --ease-std: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { box-sizing: border-box; }
+*::selection { background: var(--accent-soft); color: var(--ink-900); }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink-900);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  font-feature-settings: "ss01" 1, "cv11" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(0,0,0,0.022) 1px, transparent 0),
+    radial-gradient(80% 50% at 50% 0%, rgba(255,255,255,0.6), transparent 70%);
+  background-size: 28px 28px, 100% 100%;
+  min-height: 100vh;
+}
+
+.tnum { font-variant-numeric: tabular-nums; }
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-feature-settings: "tnum" 1; }
+
+a { color: var(--ink-900); text-decoration: none; transition: opacity 160ms; }
+a:hover { opacity: 0.65; }
+
+/* === Stagger entrance animation === */
+.fade-in { opacity: 0; transform: translateY(8px); animation: enter 600ms var(--ease-out-expo) forwards; }
+.fade-in[data-delay="1"] { animation-delay: 60ms; }
+.fade-in[data-delay="2"] { animation-delay: 120ms; }
+.fade-in[data-delay="3"] { animation-delay: 180ms; }
+.fade-in[data-delay="4"] { animation-delay: 240ms; }
+.fade-in[data-delay="5"] { animation-delay: 300ms; }
+.fade-in[data-delay="6"] { animation-delay: 360ms; }
+@keyframes enter {
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { animation: none; opacity: 1; transform: none; }
+}
+
+/* === Test-mode ribbon === */
+.ribbon {
+  height: 32px;
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  gap: 8px;
+}
+.ribbon__dot {
+  width: 6px; height: 6px;
+  border-radius: 999px;
+  background: var(--warn-fg);
+  opacity: 0.5;
+}
+
+/* === Header === */
+.header {
+  height: 68px;
+  border-bottom: 1px solid var(--ink-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  background: rgba(250,250,248,0.82);
+}
+.header__merchant { display: flex; align-items: center; gap: 12px; }
+
+/* SEP "Educación" official logo treatment */
+.sep-emblem {
+  width: 42px; height: 42px;
+  flex-shrink: 0;
+  color: #7B1E3A;
+}
+.sep-emblem svg { width: 100%; height: 100%; }
+.sep-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1;
+}
+.sep-text__main {
+  font-family: 'Playfair Display', Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: #7B1E3A;
+  letter-spacing: -0.015em;
+  line-height: 1;
+}
+.sep-text__sub {
+  font-size: 10.5px;
+  color: var(--ink-900);
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.1;
+}
+
+.header__trust { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-500); }
+.header__trust-lock { width: 14px; height: 14px; opacity: 0.7; }
+
+/* Vecnet Pay logomark */
+.vecnet-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-900);
+}
+.vecnet-mark__icon {
+  width: 18px; height: 18px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #14B8A6;
+}
+.vecnet-mark__icon svg { width: 18px; height: 18px; }
+.vecnet-mark__word {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink-900);
+}
+
+/* === Canvas === */
+.canvas {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 56px 40px 80px;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+}
+
+@media (max-width: 920px) {
+  .canvas { grid-template-columns: 1fr; gap: 14px; padding: 16px 14px 120px; }
+  .summary { order: -1; position: static; }
+  .header { padding: 0 16px; height: 60px; }
+  .sep-emblem { width: 34px; height: 34px; }
+  .sep-text__main { font-size: 17px; }
+  .sep-text__sub { font-size: 9.5px; }
+  .header__trust-copy { display: none; }
+  .header__trust-lock { display: none; }
+  .ribbon { height: 28px; font-size: 11px; padding: 0 12px; }
+  .pay-panel { gap: 24px; }
+
+  /* Hero */
+  .hero__amount { font-size: 44px; letter-spacing: -0.04em; }
+  .hero__currency { font-size: 16px; -webkit-text-fill-color: var(--ink-400); }
+  .hero__concept { font-size: 12.5px; }
+
+  /* Tabs */
+  .tabs { padding: 4px; border-radius: 14px; }
+  .tab { height: 40px; font-size: 12.5px; gap: 6px; border-radius: 10px; }
+  .tab svg { width: 14px; height: 14px; }
+  .tab span { display: inline; }
+
+  /* Card preview */
+  .card-preview { width: 100%; max-width: 340px; height: 210px; }
+
+  /* Inputs */
+  .form { gap: 14px; }
+  .input { height: 48px; font-size: 16px; } /* 16px prevents iOS zoom on focus */
+
+  /* Summary collapsible accordion */
+  .summary { border-radius: 18px; }
+  .summary__details > summary {
+    padding: 14px 20px;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .summary__chevron { display: block; }
+  .summary__details > summary .summary__chevron {
+    width: 16px; height: 16px;
+    color: var(--ink-400);
+    flex-shrink: 0;
+  }
+  .summary .summary__total--collapsed {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .summary .summary__total--collapsed .summary__total-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-500);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .summary .summary__total--collapsed .summary__total-value-wrap {
+    gap: 4px;
+    align-items: baseline;
+  }
+  .summary .summary__total--collapsed .summary__total-value {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--ink-900);
+  }
+  .summary .summary__total--collapsed .summary__total-currency {
+    font-size: 11px;
+    color: var(--ink-400);
+    font-weight: 500;
+  }
+  .summary .summary__total--expanded { display: none; }
+  .summary__body { padding: 0 20px 20px; gap: 16px; }
+  .summary__title { display: none; }
+
+  /* Footer */
+  .footer { padding: 0 16px 32px; }
+  .footer__links { flex-wrap: wrap; justify-content: center; gap: 12px; }
+
+  /* Sticky CTA bar */
+  .cta-wrap {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 30;
+    padding: 12px 16px max(16px, env(safe-area-inset-bottom));
+    background: rgba(250, 250, 248, 0.92);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    border-top: 1px solid var(--ink-200);
+    gap: 8px;
+  }
+  .cta { height: 54px; font-size: 15px; }
+  .cta-wrap .legal { display: none; }
+}
+
+@media (max-width: 480px) {
+  .header__trust .vecnet-mark__word { font-size: 12px; }
+  .hero__amount { font-size: 40px; }
+  .sep-text__sub { display: none; }
+  .sep-text__main { font-size: 16px; }
+}
+
+/* === Pay panel === */
+.pay-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hero__label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex; align-items: center; gap: 7px;
+}
+.hero__label::before {
+  content: "";
+  width: 5px; height: 5px;
+  border-radius: 999px;
+  background: var(--success);
+  display: inline-block;
+  box-shadow: 0 0 0 3px var(--success-soft);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+.hero__amount {
+  font-size: 64px;
+  font-weight: 600;
+  line-height: 1.0;
+  letter-spacing: -0.045em;
+  color: var(--ink-900);
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: linear-gradient(180deg, var(--ink-900) 0%, var(--ink-700) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero__currency {
+  font-size: 20px;
+  color: var(--ink-400);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  -webkit-text-fill-color: var(--ink-400);
+}
+.hero__concept {
+  color: var(--ink-500);
+  font-size: 13.5px;
+  margin-top: 4px;
+  letter-spacing: -0.005em;
+}
+
+/* Express row */
+/* Method tabs */
+.tabs {
+  display: flex;
+  background: var(--ink-100);
+  padding: 5px;
+  border-radius: 18px;
+  gap: 2px;
+  position: relative;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.025);
+}
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink-500);
+  border-radius: 13px;
+  transition: color 200ms var(--ease-std), background 240ms var(--ease-std), box-shadow 240ms, transform 200ms var(--ease-std);
+  letter-spacing: -0.005em;
+}
+.tab:hover:not([aria-selected="true"]) { color: var(--ink-700); }
+.tab[aria-selected="true"] {
+  background: var(--surface);
+  color: var(--ink-900);
+  box-shadow:
+    0 1px 1px rgba(0,0,0,0.05),
+    0 2px 8px rgba(0,0,0,0.05),
+    0 0 0 0.5px rgba(0,0,0,0.06);
+}
+.tab[aria-selected="true"] svg { color: var(--ink-900); }
+.tab svg { width: 15px; height: 15px; color: var(--ink-400); transition: color 220ms; }
+
+/* Method panels */
+.panels { position: relative; }
+.panel {
+  display: none;
+  animation: panelIn 320ms var(--ease-out-expo);
+}
+.panel[data-active="true"] { display: flex; flex-direction: column; gap: 24px; }
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === Card preview === */
+.card-preview {
+  perspective: 1400px;
+  margin: 0 auto;
+  width: 360px;
+  height: 224px;
+  user-select: none;
+}
+.card-preview__inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 600ms var(--ease-out-expo);
+  transform-style: preserve-3d;
+}
+.card-preview[data-flipped="true"] .card-preview__inner {
+  transform: rotateY(180deg);
+}
+.card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  padding: 24px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 12px 28px rgba(0,0,0,0.08),
+    0 32px 64px rgba(0,0,0,0.04),
+    0 0 0 0.5px rgba(0,0,0,0.08) inset;
+  background:
+    radial-gradient(140% 100% at 0% 0%, rgba(255,255,255,0.9), transparent 60%),
+    linear-gradient(135deg, #FFFFFF 0%, #F4F4F2 100%);
+  color: var(--ink-900);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  /* Front face: visible by default, fades back in AFTER the rotation completes */
+  opacity: 1;
+  transition: opacity 280ms var(--ease-std) 320ms;
+}
+/* Back face: hidden by default, fades out on its own faster timeline */
+.card-face--back {
+  opacity: 0;
+  transition: opacity 280ms var(--ease-std);
+  pointer-events: none;
+}
+/* Flipped state: front fades out immediately, back fades in after 90° */
+.card-preview[data-flipped="true"] .card-face:not(.card-face--back) {
+  opacity: 0;
+  transition: opacity 280ms var(--ease-std);
+  pointer-events: none;
+}
+.card-preview[data-flipped="true"] .card-face--back {
+  opacity: 1;
+  transition: opacity 280ms var(--ease-std) 320ms;
+  pointer-events: auto;
+}
+/* Subtle pearlescent shimmer for the white card */
+.card-face::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(105deg,
+      transparent 30%,
+      rgba(255,255,255,0.55) 45%,
+      rgba(220,225,235,0.20) 50%,
+      rgba(255,255,255,0.55) 55%,
+      transparent 70%);
+  pointer-events: none;
+  opacity: 0.5;
+}
+.card-face::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background: radial-gradient(circle, rgba(255,200,150,0.10), transparent 60%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-std);
+}
+.card-preview:hover .card-face::after { opacity: 1; }
+
+.card-face--back {
+  transform: rotateY(180deg);
+  background:
+    linear-gradient(135deg, #FFFFFF 0%, #F4F4F2 100%);
+  padding: 0;
+}
+.card-face__chip {
+  width: 38px; height: 30px;
+  border-radius: 6px;
+  background:
+    radial-gradient(120% 100% at 0% 0%, rgba(255,255,255,0.35), transparent 50%),
+    linear-gradient(135deg, #e6c75a 0%, #b8902f 40%, #d4af37 60%, #a87f24 100%);
+  position: relative;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.30),
+    inset 0 0.5px 0 rgba(255,255,255,0.30),
+    inset 0 -0.5px 0 rgba(0,0,0,0.20);
+}
+.card-face__chip::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 3px;
+  border: 0.5px solid rgba(0,0,0,0.25);
+  background:
+    linear-gradient(0deg, transparent 45%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.18) 55%, transparent 55%),
+    linear-gradient(90deg, transparent 45%, rgba(0,0,0,0.18) 45%, rgba(0,0,0,0.18) 55%, transparent 55%);
+}
+.card-face__contactless {
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--ink-400);
+}
+.card-face__contactless svg { width: 18px; height: 18px; }
+
+.card-face__row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+.card-face__top { align-items: center; }
+.card-face__number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-900);
+  position: relative;
+  z-index: 2;
+}
+.card-face__label {
+  font-size: 8.5px;
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.card-face__value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--ink-800);
+}
+.card-face__brand {
+  opacity: 0;
+  transition: opacity 240ms var(--ease-std);
+  height: 22px;
+  display: flex;
+  align-items: center;
+}
+.card-face__brand[data-visible="true"] { opacity: 1; }
+.card-face__brand-visa {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+}
+.card-face__brand-visa svg { height: 30px; width: auto; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+.card-face__brand-mc {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+}
+.card-face__brand-mc svg { height: 28px; width: auto; display: block; }
+.card-face__brand-amex {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+}
+.card-face__brand-amex svg { height: 30px; width: auto; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+/* Card back face */
+.card-face--back .card-face__magstripe {
+  height: 42px;
+  background: rgba(0,0,0,0.85);
+  margin-top: 24px;
+  position: relative;
+  z-index: 2;
+}
+.card-face--back .card-face__cvc-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 20px 24px;
+  gap: 14px;
+  position: relative;
+  z-index: 2;
+}
+.card-face--back .card-face__cvc {
+  background: var(--ink-100);
+  color: var(--ink-900);
+  padding: 7px 12px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  min-width: 60px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* === Form === */
+.form { display: flex; flex-direction: column; gap: 18px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-700);
+  letter-spacing: -0.005em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.field__hint { font-size: 11px; color: var(--ink-400); font-weight: 400; }
+.field__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input {
+  width: 100%;
+  height: 50px;
+  border-radius: var(--r-input);
+  border: 1px solid var(--ink-200);
+  background: var(--surface);
+  padding: 0 16px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--ink-900);
+  letter-spacing: -0.005em;
+  transition: border-color 160ms var(--ease-std), box-shadow 160ms var(--ease-std), background 160ms;
+  outline: none;
+  box-shadow: var(--shadow-inset);
+}
+.input::placeholder { color: var(--ink-400); font-weight: 400; }
+.input:hover { border-color: var(--ink-300); }
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-focus), var(--shadow-inset);
+  background: var(--surface);
+}
+.input.is-error { border-color: var(--danger); }
+.input.is-error:focus { box-shadow: 0 0 0 4px rgba(185,28,28,0.15), var(--shadow-inset); }
+
+.field__suffix {
+  position: absolute;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  color: var(--ink-400);
+}
+.field__brand {
+  height: 18px;
+  opacity: 0;
+  transition: opacity 240ms var(--ease-std);
+  display: inline-flex;
+  align-items: center;
+}
+.field__brand[data-visible="true"] { opacity: 1; }
+.field__brand-visa {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+}
+.field__brand-visa svg { height: 20px; width: auto; border-radius: 3px; }
+.field__brand-mc {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+}
+.field__brand-mc svg { height: 18px; width: auto; display: block; }
+.field__brand-amex {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+}
+.field__brand-amex svg { height: 20px; width: auto; border-radius: 3px; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* CTA */
+.cta-wrap { display: flex; flex-direction: column; gap: 12px; }
+.cta {
+  width: 100%;
+  height: 58px;
+  border: none;
+  border-radius: var(--r-cta);
+  background: linear-gradient(180deg, #1a1a1a, #050505);
+  color: white;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  cursor: pointer;
+  box-shadow: var(--shadow-button);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  transition: transform 80ms var(--ease-std), filter 200ms var(--ease-std);
+  overflow: hidden;
+}
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent 30%);
+  pointer-events: none;
+}
+.cta:hover { filter: brightness(1.18); }
+.cta:active { transform: scale(0.985); }
+.cta__arrow {
+  display: inline-block;
+  transition: transform 240ms var(--ease-out-expo);
+  font-size: 18px;
+  margin-left: 4px;
+}
+.cta:hover .cta__arrow { transform: translateX(4px); }
+.cta__spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.25);
+  border-top-color: white;
+  border-radius: 999px;
+  animation: spin 0.9s linear infinite;
+  display: none;
+}
+.cta[data-loading="true"] .cta__spinner { display: inline-block; }
+.cta[data-loading="true"] .cta__label, .cta[data-loading="true"] .cta__arrow { opacity: 0.55; }
+
+.legal {
+  font-size: 12px;
+  color: var(--ink-500);
+  line-height: 1.55;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+.legal__trust {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink-600);
+}
+.legal__trust svg { width: 12px; height: 12px; }
+.legal a { color: var(--ink-700); }
+
+/* === SPEI panel === */
+.spei {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  box-shadow: var(--shadow-card);
+}
+.spei__kv { display: flex; flex-direction: column; gap: 4px; }
+.spei__label {
+  font-size: 11px;
+  color: var(--ink-500);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.spei__value-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.spei__value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ink-900);
+}
+.spei__value--text { font-family: 'Inter', sans-serif; font-size: 15px; letter-spacing: -0.01em; font-weight: 500; }
+.copy-btn {
+  background: var(--ink-100);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  height: 34px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-700);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 160ms var(--ease-std);
+}
+.copy-btn:hover { background: var(--surface); border-color: var(--ink-200); }
+.copy-btn:active { transform: scale(0.97); }
+.spei__countdown {
+  font-size: 13px;
+  color: var(--ink-500);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+.spei__countdown::before {
+  content: "";
+  width: 8px; height: 8px;
+  border-radius: 999px;
+  background: var(--success);
+  display: inline-block;
+  box-shadow: 0 0 0 3px var(--success-soft);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+/* === OXXO panel === */
+.oxxo {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+.oxxo__barcode {
+  background: white;
+  padding: 20px 22px;
+  border-radius: 12px;
+  border: 1px solid var(--ink-200);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.oxxo__bar {
+  width: 2px;
+  background: var(--ink-900);
+  height: 50px;
+}
+.oxxo__bar--w { width: 4px; }
+.oxxo__bar--xw { width: 6px; }
+.oxxo__bar--thin { width: 1px; }
+.oxxo__ref {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 19px;
+  letter-spacing: 0.08em;
+  color: var(--ink-900);
+  font-weight: 500;
+}
+.oxxo__instructions {
+  font-size: 13px;
+  color: var(--ink-500);
+  max-width: 360px;
+  line-height: 1.6;
+}
+
+/* === Summary === */
+.summary {
+  position: sticky;
+  top: 96px;
+  align-self: start;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.summary__details { width: 100%; }
+.summary__details > summary {
+  list-style: none;
+  cursor: default;
+}
+@media (min-width: 921px) {
+  .summary__details > summary { padding: 32px 32px 0; }
+}
+.summary__details > summary::-webkit-details-marker { display: none; }
+.summary__chevron {
+  color: var(--ink-500);
+  transition: transform 240ms var(--ease-std);
+  flex-shrink: 0;
+}
+@media (min-width: 921px) {
+  .summary__chevron { display: none; }
+}
+.summary__details[open] .summary__chevron { transform: rotate(180deg); }
+@media (min-width: 921px) {
+  .summary .summary__total--collapsed { display: none; }
+}
+.summary__body {
+  padding: 24px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.summary__title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-500);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.summary__kvs { display: flex; flex-direction: column; gap: 16px; }
+.summary__kv {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  align-items: baseline;
+}
+.summary__kv-label { color: var(--ink-500); font-weight: 400; letter-spacing: -0.005em; }
+.summary__kv-value { color: var(--ink-900); text-align: right; word-break: break-all; font-weight: 500; letter-spacing: -0.005em; }
+.summary__divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ink-200) 20%, var(--ink-200) 80%, transparent);
+  margin: 2px 0;
+}
+.summary__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.summary__total-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.01em;
+}
+.summary__total-value-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.summary__total-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.summary__total-currency {
+  font-size: 11px;
+  color: var(--ink-400);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.trust-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 18px;
+  border-top: 1px solid var(--ink-200);
+  margin-top: 4px;
+}
+.trust-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  color: var(--ink-600);
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-weight: 500;
+  background: var(--ink-100);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.trust-chip svg { width: 10px; height: 10px; opacity: 0.7; }
+
+/* Footer */
+.footer {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 40px 56px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-500);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+.footer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.footer__brand .vecnet-mark__word { font-size: 13px; }
+.footer__links { display: inline-flex; gap: 16px; }
+.footer a { color: var(--ink-600); }
+
+/* === Modal === */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,10,10,0.40);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: backdropIn 240ms var(--ease-out-expo);
+}
+.modal-backdrop[data-open="true"] { display: flex; }
+@keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  width: 460px;
+  max-width: 100%;
+  background: var(--surface);
+  border-radius: var(--r-modal);
+  box-shadow: var(--shadow-elevated);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: scaleIn 320ms var(--ease-out-expo);
+}
+@keyframes scaleIn {
+  from { transform: scale(0.94); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.modal__header {
+  height: 56px;
+  border-bottom: 1px solid var(--ink-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+.modal__title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+.modal__close {
+  width: 32px; height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: var(--ink-100);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-700);
+  transition: all 160ms;
+}
+.modal__close:hover { background: var(--ink-200); transform: scale(1.05); }
+.modal__body {
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: var(--ink-500);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* === Success state === */
+.success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 48px 32px;
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  animation: successIn 480ms var(--ease-out-expo);
+}
+.success[data-visible="true"] { display: flex; }
+@keyframes successIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+.success__check {
+  width: 72px;
+  height: 72px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #1a1a1a, #050505);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.16),
+    0 16px 36px rgba(0,0,0,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.12);
+  position: relative;
+}
+.success__check::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 999px;
+  border: 1px solid var(--success-soft);
+  opacity: 0;
+  animation: ripple 1.2s var(--ease-out-expo) forwards;
+}
+@keyframes ripple {
+  from { transform: scale(0.6); opacity: 1; }
+  to { transform: scale(1.4); opacity: 0; }
+}
+.success__check svg {
+  width: 32px;
+  height: 32px;
+  stroke: white;
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: drawCheck 600ms 200ms var(--ease-out-expo) forwards;
+}
+@keyframes drawCheck { to { stroke-dashoffset: 0; } }
+.success__title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink-900);
+}
+.success__detail {
+  font-size: 15px;
+  color: var(--ink-500);
+  text-align: center;
+  line-height: 1.5;
+}
+.success__detail b { color: var(--ink-900); font-weight: 600; }
+.success__receipt {
+  width: 100%;
+  max-width: 360px;
+  border: 1px solid var(--ink-200);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface-2);
+  margin-top: 4px;
+}
+.success__receipt-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--ink-700);
+}
+.success__receipt-label { color: var(--ink-500); }
+.success__actions {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+.btn-ghost {
+  height: 48px;
+  border-radius: 12px;
+  border: 1px solid var(--ink-200);
+  background: var(--surface);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink-900);
+  cursor: pointer;
+  transition: all 160ms;
+}
+.btn-ghost:hover { border-color: var(--ink-400); background: var(--surface-2); }
+
+.field__error {
+  display: none;
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 2px;
+  letter-spacing: -0.005em;
+}
+.field__error[data-visible="true"] { display: block; animation: errSlide 200ms var(--ease-std); }
+@keyframes errSlide {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+.cta[data-shake="true"] { animation: shake 320ms var(--ease-std); }
+
+.spinner-ring { animation: spin 0.9s linear infinite; color: var(--ink-500); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+
+<!-- Test mode ribbon -->
+<div class="ribbon"><span class="ribbon__dot"></span>Modo de pruebas — no se realizará ningún cargo</div>
+
+<!-- Header -->
+<header class="header">
+  <div class="header__merchant">
+    <div class="sep-emblem" aria-label="Escudo Nacional de México">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+        <!-- Outer ring with "ESTADOS UNIDOS MEXICANOS" text effect -->
+        <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="50" cy="50" r="44" fill="none" stroke="currentColor" stroke-width="0.5"/>
+        <!-- Decorative dots representing the ring text -->
+        <g opacity="0.55">
+          <circle cx="50" cy="6" r="0.9"/><circle cx="60" cy="7.4" r="0.9"/><circle cx="69.7" cy="10.5" r="0.9"/>
+          <circle cx="78.5" cy="15.3" r="0.9"/><circle cx="86" cy="21.6" r="0.9"/><circle cx="91.7" cy="29.1" r="0.9"/>
+          <circle cx="95.6" cy="37.5" r="0.9"/><circle cx="97.5" cy="46.5" r="0.9"/><circle cx="97.5" cy="53.5" r="0.9"/>
+          <circle cx="95.6" cy="62.5" r="0.9"/><circle cx="91.7" cy="70.9" r="0.9"/><circle cx="86" cy="78.4" r="0.9"/>
+          <circle cx="78.5" cy="84.7" r="0.9"/><circle cx="69.7" cy="89.5" r="0.9"/><circle cx="60" cy="92.6" r="0.9"/>
+          <circle cx="50" cy="94" r="0.9"/><circle cx="40" cy="92.6" r="0.9"/><circle cx="30.3" cy="89.5" r="0.9"/>
+          <circle cx="21.5" cy="84.7" r="0.9"/><circle cx="14" cy="78.4" r="0.9"/><circle cx="8.3" cy="70.9" r="0.9"/>
+          <circle cx="4.4" cy="62.5" r="0.9"/><circle cx="2.5" cy="53.5" r="0.9"/><circle cx="2.5" cy="46.5" r="0.9"/>
+          <circle cx="4.4" cy="37.5" r="0.9"/><circle cx="8.3" cy="29.1" r="0.9"/><circle cx="14" cy="21.6" r="0.9"/>
+          <circle cx="21.5" cy="15.3" r="0.9"/><circle cx="30.3" cy="10.5" r="0.9"/><circle cx="40" cy="7.4" r="0.9"/>
+        </g>
+        <!-- Eagle body (simplified silhouette) -->
+        <g>
+          <!-- Eagle head -->
+          <ellipse cx="50" cy="38" rx="4" ry="5"/>
+          <!-- Beak -->
+          <path d="M50 41 L 53 44 L 48 43 Z"/>
+          <!-- Left wing spread -->
+          <path d="M46 42 Q 32 32, 24 44 Q 30 48, 42 50 Q 44 47, 46 45 Z"/>
+          <!-- Right wing spread -->
+          <path d="M54 42 Q 68 32, 76 44 Q 70 48, 58 50 Q 56 47, 54 45 Z"/>
+          <!-- Body/torso -->
+          <ellipse cx="50" cy="50" rx="5" ry="7"/>
+          <!-- Tail feathers -->
+          <path d="M46 56 L 44 64 L 47 62 L 48 65 L 50 63 L 52 65 L 53 62 L 56 64 L 54 56 Z"/>
+          <!-- Snake in beak (simplified curve) -->
+          <path d="M53 44 Q 60 42, 64 47 Q 66 50, 64 52" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </g>
+        <!-- Cactus / nopal base -->
+        <g>
+          <!-- Center cactus pad -->
+          <ellipse cx="50" cy="69" rx="3" ry="5"/>
+          <!-- Left pad -->
+          <ellipse cx="42" cy="71" rx="4" ry="3" transform="rotate(-25 42 71)"/>
+          <!-- Right pad -->
+          <ellipse cx="58" cy="71" rx="4" ry="3" transform="rotate(25 58 71)"/>
+          <!-- Lower pads -->
+          <ellipse cx="46" cy="77" rx="3.5" ry="2.5"/>
+          <ellipse cx="54" cy="77" rx="3.5" ry="2.5"/>
+        </g>
+        <!-- Ribbon/wreath at bottom -->
+        <g>
+          <path d="M 20 84 Q 35 91, 50 89 Q 65 91, 80 84 L 78 86 Q 65 92, 50 90 Q 35 92, 22 86 Z"/>
+        </g>
+      </svg>
+    </div>
+    <div class="sep-text">
+      <div class="sep-text__main">Educación</div>
+      <div class="sep-text__sub">Secretaría de Educación Pública</div>
+    </div>
+  </div>
+  <div class="header__trust">
+    <svg class="header__trust-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+    <span class="header__trust-copy">Pago seguro con</span>
+    <span class="vecnet-mark">
+      <span class="vecnet-mark__icon">
+        <svg viewBox="0 0 100 100" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <circle cx="50" cy="10" r="7"/>
+          <line x1="28" y1="30" x2="72" y2="30" />
+          <circle cx="28" cy="30" r="7"/>
+          <circle cx="72" cy="30" r="7"/>
+          <line x1="12" y1="50" x2="48" y2="50" stroke-width="3.5"/>
+          <circle cx="12" cy="50" r="9"/>
+          <circle cx="48" cy="50" r="7"/>
+          <circle cx="88" cy="50" r="9"/>
+          <line x1="35" y1="70" x2="65" y2="70" />
+          <circle cx="35" cy="70" r="6"/>
+          <circle cx="65" cy="70" r="6"/>
+          <circle cx="50" cy="90" r="7"/>
+        </svg>
+      </span>
+      <span class="vecnet-mark__word">Vecnet Pay</span>
+    </span>
+  </div>
+</header>
+
+<!-- Canvas -->
+<main class="canvas">
+
+  <!-- Pay panel -->
+  <section class="pay-panel" id="payPanel">
+
+    <!-- Hero amount -->
+    <div class="hero fade-in" data-delay="0">
+      <div class="hero__label">Total a pagar</div>
+      <div class="hero__amount">
+        <span>$1,050.<span style="color:var(--ink-700);">00</span></span>
+        <span class="hero__currency">MXN</span>
+      </div>
+      <div class="hero__concept">Cédula Profesional · Folio <span class="mono" style="font-size:13px;">28937380016363113518</span></div>
+    </div>
+
+    <!-- Method tabs -->
+    <div class="tabs fade-in" data-delay="3" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-tab="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3" /><path d="M2 10h20" /><path d="M6 15h3" /></svg>
+        Tarjeta
+      </button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="spei">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10h18M3 10L12 4l9 6M5 10v9M19 10v9M9 10v9M15 10v9M3 19h18"/></svg>
+        SPEI
+      </button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="oxxo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 8v12h16V8"/>
+          <path d="M3 8l2-3h14l2 3z"/>
+          <path d="M10 20v-4a2 2 0 0 1 4 0v4"/>
+        </svg>
+        OXXO
+      </button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="tienda">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 13h6"/></svg>
+        Tienda
+      </button>
+    </div>
+
+    <!-- Method panels -->
+    <div class="panels fade-in" data-delay="4">
+
+      <!-- Card panel -->
+      <div class="panel" data-panel="card" data-active="true">
+
+        <div class="card-preview" id="cardPreview">
+          <div class="card-preview__inner">
+            <!-- Front -->
+            <div class="card-face">
+              <div class="card-face__row card-face__top">
+                <div style="display:flex; align-items:center;">
+                  <div class="card-face__chip"></div>
+                  <span class="card-face__contactless">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                      <path d="M8 9.5 A 5 5 0 0 1 8 14.5"/>
+                      <path d="M11.5 7 A 8.5 8.5 0 0 1 11.5 17"/>
+                      <path d="M15 4.5 A 12 12 0 0 1 15 19.5"/>
+                    </svg>
+                  </span>
+                </div>
+                <div class="card-face__brand" id="brandFront">
+                  <span class="card-face__brand-visa"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#2100C4" d="M45,35c0,2.209-1.791,4-4,4H7c-2.209,0-4-1.791-4-4V13c0-2.209,1.791-4,4-4h34c2.209,0,4,1.791,4,4V35z"/><path fill="#FFFFFF" d="M15.186,19l-2.626,7.832c0,0-0.667-3.313-0.733-3.729c-1.495-3.411-3.701-3.221-3.701-3.221L10.726,30v-0.002h3.161L18.258,19H15.186z M17.689,30h2.871l1.736-11h-2.907L17.689,30z M38.008,19h-3.021l-4.71,11h2.852l0.588-1.571h3.596L37.619,30h2.613L38.008,19z M34.513,26.328l1.563-4.157l0.818,4.157H34.513z M26.369,22.206c0-0.606,0.498-1.057,1.926-1.057c0.928,0,1.991,0.674,1.991,0.674l0.466-2.309c0,0-1.358-0.515-2.691-0.515c-3.019,0-4.576,1.444-4.576,3.272c0,3.306,3.979,2.853,3.979,4.551c0,0.291-0.231,0.964-1.888,0.964c-1.662,0-2.759-0.609-2.759-0.609l-0.495,2.216c0,0,1.063,0.606,3.117,0.606c2.059,0,4.915-1.54,4.915-3.752C30.354,23.586,26.369,23.394,26.369,22.206z"/><path fill="#F5BC00" d="M12.212,24.945l-0.966-4.748c0,0-0.437-1.029-1.573-1.029s-4.44,0-4.44,0S10.894,20.84,12.212,24.945z"/></svg></span>
+                </div>
+              </div>
+              <div class="card-face__number" id="previewNumber">•••• •••• •••• ••••</div>
+              <div class="card-face__row">
+                <div>
+                  <div class="card-face__label">Titular</div>
+                  <div class="card-face__value" id="previewName">NOMBRE APELLIDO</div>
+                </div>
+                <div>
+                  <div class="card-face__label">Vence</div>
+                  <div class="card-face__value" id="previewExpiry">MM/AA</div>
+                </div>
+              </div>
+            </div>
+            <!-- Back -->
+            <div class="card-face card-face--back">
+              <div class="card-face__magstripe"></div>
+              <div class="card-face__cvc-row">
+                <div class="card-face__label">CVC</div>
+                <div class="card-face__cvc" id="previewCvc">•••</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form class="form" autocomplete="off" onsubmit="event.preventDefault(); pay();">
+          <div class="field">
+            <label class="field__label" for="cardholder">
+              <span>Nombre del titular</span>
+            </label>
+            <div class="field__input-wrap">
+              <input class="input" id="cardholder" type="text" placeholder="Como aparece en la tarjeta" autocomplete="cc-name" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="cardnumber">
+              <span>Número de tarjeta</span>
+              <span class="field__hint">Visa · Mastercard · Amex</span>
+            </label>
+            <div class="field__input-wrap">
+              <input class="input" id="cardnumber" type="text" placeholder="1234 1234 1234 1234" inputmode="numeric" autocomplete="cc-number" maxlength="19" />
+              <div class="field__suffix">
+                <span class="field__brand" id="brandLabel"></span>
+                <svg id="cardIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="expiry">Vencimiento</label>
+              <input class="input" id="expiry" type="text" placeholder="MM / AA" inputmode="numeric" autocomplete="cc-exp" maxlength="7" aria-describedby="expiryError" />
+              <span class="field__error" id="expiryError" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label class="field__label" for="cvc">CVC</label>
+              <div class="field__input-wrap">
+                <input class="input" id="cvc" type="text" placeholder="•••" inputmode="numeric" autocomplete="cc-csc" maxlength="4" />
+                <div class="field__suffix">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cta-wrap">
+            <button type="submit" class="cta" id="payBtn">
+              <span class="cta__spinner" aria-hidden="true"></span>
+              <span class="cta__label" id="payLabel">Pagar $1,050.00 MXN</span>
+              <span class="cta__arrow" aria-hidden="true">→</span>
+            </button>
+            <div class="legal">
+              <div class="legal__trust">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Pagas con verificación 3-D Secure
+              </div>
+              <div>
+                Al continuar aceptas los <a href="#">Términos</a> y la <a href="#">Política de Privacidad</a> de Vecnet Pay.
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+      <!-- SPEI panel -->
+      <div class="panel" data-panel="spei">
+        <div class="spei">
+          <div class="spei__kv">
+            <div class="spei__label">CLABE interbancaria</div>
+            <div class="spei__value-row">
+              <div class="spei__value">012 180 04567890123 4</div>
+              <button class="copy-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M3 16V5a2 2 0 0 1 2-2h11"/></svg>
+                Copiar
+              </button>
+            </div>
+          </div>
+          <div class="spei__kv">
+            <div class="spei__label">Banco beneficiario</div>
+            <div class="spei__value spei__value--text">BBVA México</div>
+          </div>
+          <div class="spei__kv">
+            <div class="spei__label">Referencia</div>
+            <div class="spei__value-row">
+              <div class="spei__value">28937380016363113518</div>
+              <button class="copy-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M3 16V5a2 2 0 0 1 2-2h11"/></svg>
+                Copiar
+              </button>
+            </div>
+          </div>
+          <div class="spei__kv">
+            <div class="spei__label">Monto exacto</div>
+            <div class="spei__value spei__value--text">$1,050.00 MXN</div>
+          </div>
+          <div class="spei__countdown">Esperando transferencia · Esta CLABE expira en 23h 47m</div>
+        </div>
+      </div>
+
+      <!-- OXXO panel -->
+      <div class="panel" data-panel="oxxo">
+        <div class="oxxo">
+          <div class="oxxo__barcode" aria-label="Código de barras">
+            <div class="oxxo__bar oxxo__bar--w"></div><div class="oxxo__bar"></div>
+            <div class="oxxo__bar oxxo__bar--xw"></div><div class="oxxo__bar oxxo__bar--thin"></div>
+            <div class="oxxo__bar"></div><div class="oxxo__bar oxxo__bar--w"></div>
+            <div class="oxxo__bar oxxo__bar--thin"></div><div class="oxxo__bar"></div>
+            <div class="oxxo__bar oxxo__bar--xw"></div><div class="oxxo__bar"></div>
+            <div class="oxxo__bar oxxo__bar--thin"></div><div class="oxxo__bar oxxo__bar--w"></div>
+            <div class="oxxo__bar"></div><div class="oxxo__bar oxxo__bar--xw"></div>
+            <div class="oxxo__bar oxxo__bar--thin"></div><div class="oxxo__bar"></div>
+            <div class="oxxo__bar oxxo__bar--w"></div><div class="oxxo__bar"></div>
+            <div class="oxxo__bar oxxo__bar--thin"></div><div class="oxxo__bar oxxo__bar--xw"></div>
+            <div class="oxxo__bar"></div><div class="oxxo__bar oxxo__bar--w"></div>
+            <div class="oxxo__bar"></div><div class="oxxo__bar oxxo__bar--thin"></div>
+            <div class="oxxo__bar oxxo__bar--xw"></div><div class="oxxo__bar"></div>
+            <div class="oxxo__bar oxxo__bar--w"></div><div class="oxxo__bar oxxo__bar--thin"></div>
+            <div class="oxxo__bar"></div>
+          </div>
+          <div class="oxxo__ref">9320 4503 1163 7290</div>
+          <div class="oxxo__instructions">
+            Lleva este código a cualquier tienda OXXO. El cajero lo escaneará y aceptará tu pago en efectivo. Vence el 23 de mayo de 2026.
+          </div>
+          <button class="copy-btn" style="height:40px; padding:0 16px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            Descargar comprobante PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Tienda panel -->
+      <div class="panel" data-panel="tienda">
+        <div class="oxxo">
+          <div class="oxxo__instructions">
+            Disponible en <b style="color:var(--ink-900);">7-Eleven</b>, <b style="color:var(--ink-900);">Farmacias Guadalajara</b>, <b style="color:var(--ink-900);">Círculo K</b>, <b style="color:var(--ink-900);">Extra</b> y más de 12,000 puntos afiliados en todo México.
+          </div>
+          <div class="oxxo__ref">7E-29381-44520</div>
+          <button class="copy-btn" style="height:40px;">Ver tiendas cercanas</button>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- Success state (hidden by default) -->
+  <section class="success" id="successPanel">
+    <div class="success__check">
+      <svg viewBox="0 0 24 24"><polyline points="4,12 10,18 20,7"/></svg>
+    </div>
+    <div>
+      <div class="success__title">Pago realizado</div>
+    </div>
+    <div class="success__detail">
+      Enviamos un comprobante a <b>tu correo</b>.<br/>
+      Pago de <b>$1,050.00 MXN</b> a <b>Secretaría de Educación Pública</b>.
+    </div>
+    <div class="success__receipt">
+      <div class="success__receipt-row"><span class="success__receipt-label">Folio</span><span class="mono">28937380016363113518</span></div>
+      <div class="success__receipt-row"><span class="success__receipt-label">Método</span><span>Visa •••• 4242</span></div>
+      <div class="success__receipt-row"><span class="success__receipt-label">Autorización</span><span class="mono">A1B2C3D4E5</span></div>
+      <div class="success__receipt-row"><span class="success__receipt-label">Fecha</span><span>20 may 2026 · 19:03</span></div>
+    </div>
+    <div class="success__actions">
+      <button class="cta" onclick="resetCheckout()">
+        <span class="cta__label">Descargar comprobante</span>
+      </button>
+      <button class="btn-ghost" onclick="resetCheckout()">Volver al sitio del comercio</button>
+    </div>
+  </section>
+
+  <!-- Summary sidebar (desktop) / accordion (mobile) -->
+  <aside class="summary fade-in" data-delay="5">
+    <details class="summary__details" id="summaryDetails">
+      <summary class="summary__summary">
+        <div class="summary__total summary__total--collapsed">
+          <div class="summary__total-label">Total</div>
+          <div class="summary__total-value-wrap">
+            <div class="summary__total-value tnum">$1,050.00</div>
+            <div class="summary__total-currency">MXN</div>
+          </div>
+        </div>
+        <svg class="summary__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+
+      <div class="summary__body">
+        <div class="summary__title">Resumen del pago</div>
+
+        <div class="summary__kvs">
+          <div class="summary__kv">
+            <div class="summary__kv-label">Solicitante</div>
+            <div class="summary__kv-value">SEP</div>
+          </div>
+          <div class="summary__kv">
+            <div class="summary__kv-label">Concepto</div>
+            <div class="summary__kv-value">Cédula Profesional</div>
+          </div>
+          <div class="summary__kv">
+            <div class="summary__kv-label">Folio</div>
+            <div class="summary__kv-value mono" style="font-size:11.5px; font-weight:400;">28937380016363113518</div>
+          </div>
+          <div class="summary__kv">
+            <div class="summary__kv-label">Subtotal</div>
+            <div class="summary__kv-value tnum">$1,050.00</div>
+          </div>
+        </div>
+
+        <div class="summary__divider"></div>
+
+        <div class="summary__total summary__total--expanded">
+          <div class="summary__total-label">Total</div>
+          <div class="summary__total-value-wrap">
+            <div class="summary__total-value tnum">$1,050.00</div>
+            <div class="summary__total-currency">MXN</div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </aside>
+</main>
+
+
+<!-- 3DS modal -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal__header">
+      <div class="modal__title" id="modalTitle">Confirmación 3-D Secure</div>
+      <button class="modal__close" onclick="closeModal()" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal__body">
+      <div style="width:52px;height:52px;border-radius:999px;background:var(--ink-100);display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22" stroke-linecap="round" class="spinner-ring"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      </div>
+      <div style="color:var(--ink-900);font-weight:600;font-size:15px;letter-spacing:-0.01em;">Esperando confirmación de tu banco…</div>
+      <div>Tu banco está verificando la operación. Esto puede tomar unos segundos. No cierres esta ventana.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// === Summary accordion: open on desktop, collapsed on mobile ===
+const summaryDetails = document.getElementById('summaryDetails');
+const syncSummaryState = () => {
+  if (window.innerWidth >= 921) {
+    summaryDetails.setAttribute('open', '');
+  } else if (!summaryDetails.dataset.userToggled) {
+    summaryDetails.removeAttribute('open');
+  }
+};
+summaryDetails.addEventListener('toggle', () => {
+  if (window.innerWidth < 921) summaryDetails.dataset.userToggled = '1';
+});
+window.addEventListener('resize', () => {
+  delete summaryDetails.dataset.userToggled;
+  syncSummaryState();
+});
+syncSummaryState();
+
+// === Tab switching ===
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t === tab));
+    document.querySelectorAll('.panel').forEach(p => {
+      p.setAttribute('data-active', p.dataset.panel === target);
+    });
+  });
+});
+
+// === Card form: live preview ===
+const cardholder = document.getElementById('cardholder');
+const cardnumber = document.getElementById('cardnumber');
+const expiry = document.getElementById('expiry');
+const cvc = document.getElementById('cvc');
+const previewName = document.getElementById('previewName');
+const previewNumber = document.getElementById('previewNumber');
+const previewExpiry = document.getElementById('previewExpiry');
+const previewCvc = document.getElementById('previewCvc');
+const brandFront = document.getElementById('brandFront');
+const brandLabel = document.getElementById('brandLabel');
+const cardPreview = document.getElementById('cardPreview');
+
+cardholder.addEventListener('input', e => {
+  previewName.textContent = (e.target.value || 'NOMBRE APELLIDO').toUpperCase();
+});
+
+cardnumber.addEventListener('input', e => {
+  let digits = e.target.value.replace(/\D/g, '').slice(0, 19);
+  const formatted = digits.match(/.{1,4}/g)?.join(' ') || '';
+  e.target.value = formatted;
+
+  let brand = '';
+  if (/^4/.test(digits)) brand = 'VISA';
+  else if (/^5[1-5]|^2[2-7]/.test(digits)) brand = 'MC';
+  else if (/^3[47]/.test(digits)) brand = 'AMEX';
+
+  brandFront.dataset.visible = brand ? 'true' : 'false';
+  brandLabel.dataset.visible = brand ? 'true' : 'false';
+  const cardIcon = document.getElementById('cardIcon');
+  if (cardIcon) cardIcon.style.display = brand ? 'none' : '';
+
+  if (brand) {
+    brandFront.innerHTML = '';
+    brandLabel.innerHTML = '';
+    const VISA_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#2100C4" d="M45,35c0,2.209-1.791,4-4,4H7c-2.209,0-4-1.791-4-4V13c0-2.209,1.791-4,4-4h34c2.209,0,4,1.791,4,4V35z"/><path fill="#FFFFFF" d="M15.186,19l-2.626,7.832c0,0-0.667-3.313-0.733-3.729c-1.495-3.411-3.701-3.221-3.701-3.221L10.726,30v-0.002h3.161L18.258,19H15.186z M17.689,30h2.871l1.736-11h-2.907L17.689,30z M38.008,19h-3.021l-4.71,11h2.852l0.588-1.571h3.596L37.619,30h2.613L38.008,19z M34.513,26.328l1.563-4.157l0.818,4.157H34.513z M26.369,22.206c0-0.606,0.498-1.057,1.926-1.057c0.928,0,1.991,0.674,1.991,0.674l0.466-2.309c0,0-1.358-0.515-2.691-0.515c-3.019,0-4.576,1.444-4.576,3.272c0,3.306,3.979,2.853,3.979,4.551c0,0.291-0.231,0.964-1.888,0.964c-1.662,0-2.759-0.609-2.759-0.609l-0.495,2.216c0,0,1.063,0.606,3.117,0.606c2.059,0,4.915-1.54,4.915-3.752C30.354,23.586,26.369,23.394,26.369,22.206z"/><path fill="#F5BC00" d="M12.212,24.945l-0.966-4.748c0,0-0.437-1.029-1.573-1.029s-4.44,0-4.44,0S10.894,20.84,12.212,24.945z"/></svg>';
+    const MC_SVG = '<svg viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" fill="#EB001B"/><circle cx="27" cy="13" r="12" fill="#F79E1B"/><path fill="#FF5F00" d="M 20 3.25 A 12 12 0 0 1 20 22.75 A 12 12 0 0 1 20 3.25 Z"/></svg>';
+    if (brand === 'VISA') {
+      brandFront.innerHTML = '<span class="card-face__brand-visa">' + VISA_SVG + '</span>';
+      brandLabel.innerHTML = '<span class="field__brand-visa">' + VISA_SVG + '</span>';
+    } else if (brand === 'MC') {
+      brandFront.innerHTML = '<span class="card-face__brand-mc">' + MC_SVG + '</span>';
+      brandLabel.innerHTML = '<span class="field__brand-mc">' + MC_SVG + '</span>';
+    } else if (brand === 'AMEX') {
+      const AMEX_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#016dd1" d="M6,10c0-2.209,1.791-4,4-4h28c2.209,0,4,1.791,4,4v2.5l-0.423,0.492L42,13.5v10l-0.343,0.489L42,24.5l-0.303,0.736L42,25.874v7.202l-0.31,0.641L42,34.498l-0.397,0.525L42,35.504V37.5c0,2.209-1.791,4.5-4,4.5H10c-2.209,0-4-1.791-4-4V10z"/><path fill="#016dd1" d="M35.041,20.208L32.029,13.5h-3.86v9.635L23.866,13.5h-3.257l-4.393,10h2.6l0.961-2.232h4.916L25.67,23.5h4.963v-7.427l3.293,7.427h2.239l3.368-7.298V23.5H42v-10h-3.932L35.041,20.208z M20.706,19.108l1.47-3.495l1.527,3.495H20.706z"/><path fill="#016dd1" d="M42,24.5h-3.599l-3.318,3.197L31.802,24.5h-3.577h-0.021h-8.979v10h8.979h0.021h3.566l3.305-3.321l3.317,3.321H42l-5.059-5.15L42,24.5z M28.225,34.478l-0.002-2.077L21.684,32.4v-1.978h6.212v-1.895h-6.212v-1.873l6.541,0.016v-2.15l5.001,4.855L28.225,34.478z"/><polygon fill="#fff" points="42,34.5 42,33.073 38.363,29.371 42,25.885 42,24.5 36.941,29.35"/><polygon fill="#fff" points="28.225,26.671 21.684,26.654 21.684,28.527 27.896,28.527 27.896,30.422 21.684,30.422 21.684,32.4 28.223,32.401 28.225,34.478 33.225,29.376 28.225,24.521"/><polygon fill="#fff" points="23.703,19.108 22.176,15.613 20.706,19.108"/><polygon fill="#fff" points="38.413,34.5 35.096,31.179 31.79,34.5 28.225,34.5 28.203,34.5 19.225,34.5 19.225,24.5 19.474,24.5 25.016,24.5 25.67,24.5 28.203,24.5 28.225,24.5 30.633,24.5 31.633,24.5 31.802,24.5 35.084,27.697 38.401,24.5 38.533,24.5 39.533,24.5 42,24.5 42,23.5 39.533,23.5 39.533,16.202 36.166,23.5 33.927,23.5 30.633,16.073 30.633,23.5 28.225,23.5 25.67,23.5 24.693,21.268 19.777,21.268 18.816,23.5 18.225,23.5 16.216,23.5 20.609,13.5 23.866,13.5 28.168,23.135 28.168,13.5 32.029,13.5 35.041,20.208 38.068,13.5 42,13.5 42,12.5 42,12.5 38.068,12.5 37.422,12.5 37.156,13.089 35.043,17.772 32.941,13.09 32.676,12.5 32.029,12.5 28.168,12.5 27.168,12.5 27.168,13.5 27.168,18.442 24.78,13.092 24.515,12.5 23.866,12.5 20.609,12.5 19.956,12.5 19.693,13.098 15.3,23.098 14.684,24.5 16.216,24.5 18.225,24.5 18.225,34.5 18.225,35.5 19.225,35.5 28.203,35.5 31.79,35.5 32.206,35.5 32.499,35.205 35.097,32.595 37.705,35.207 37.998,35.5 38.413,35.5 42,35.5 42,34.5"/></svg>';
+      brandFront.innerHTML = '<span class="card-face__brand-amex">' + AMEX_SVG + '</span>';
+      brandLabel.innerHTML = '<span class="field__brand-amex">' + AMEX_SVG + '</span>';
+    }
+  }
+
+  let preview = '';
+  for (let i = 0; i < 19; i++) {
+    if (i < formatted.length) preview += formatted[i];
+    else if (i === 4 || i === 9 || i === 14) preview += ' ';
+    else preview += '•';
+  }
+  previewNumber.textContent = preview;
+});
+
+const expiryError = document.getElementById('expiryError');
+const NOW = new Date();
+const CUR_YY = NOW.getFullYear() % 100;
+const CUR_MM = NOW.getMonth() + 1;
+
+function validateExpiry(value) {
+  const m = value.replace(/\s/g, '').match(/^(\d{2})\/(\d{2})$/);
+  if (!m) return { valid: false, reason: 'incomplete' };
+  const mm = parseInt(m[1], 10);
+  const yy = parseInt(m[2], 10);
+  if (mm < 1 || mm > 12) return { valid: false, reason: 'invalid_month', msg: 'Mes inválido (01–12)' };
+  if (yy < CUR_YY) return { valid: false, reason: 'past_year', msg: 'La tarjeta ya venció' };
+  if (yy === CUR_YY && mm < CUR_MM) return { valid: false, reason: 'past_month', msg: 'La tarjeta ya venció' };
+  return { valid: true };
+}
+
+function showExpiryError(msg) {
+  expiry.classList.add('is-error');
+  expiryError.textContent = msg;
+  expiryError.dataset.visible = 'true';
+}
+function clearExpiryError() {
+  expiry.classList.remove('is-error');
+  expiryError.dataset.visible = 'false';
+  expiryError.textContent = '';
+}
+
+expiry.addEventListener('input', e => {
+  let digits = e.target.value.replace(/\D/g, '').slice(0, 4);
+  // Block invalid month while typing: if first digit > 1, prepend 0
+  if (digits.length === 1 && parseInt(digits, 10) > 1) {
+    digits = '0' + digits;
+  }
+  // If 2 digits and month is invalid (00 or > 12), trim back to 1
+  if (digits.length >= 2) {
+    const mm = parseInt(digits.slice(0, 2), 10);
+    if (mm === 0 || mm > 12) {
+      digits = digits.slice(0, 1);
+    }
+  }
+  if (digits.length >= 3) digits = digits.slice(0, 2) + ' / ' + digits.slice(2);
+  e.target.value = digits;
+  previewExpiry.textContent = digits || 'MM/AA';
+
+  // Inline validation only when complete
+  if (digits.length === 7) {
+    const r = validateExpiry(digits);
+    if (!r.valid && r.msg) showExpiryError(r.msg);
+    else clearExpiryError();
+  } else {
+    clearExpiryError();
+  }
+});
+
+cvc.addEventListener('input', e => {
+  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+  previewCvc.textContent = e.target.value || '•••';
+});
+
+cvc.addEventListener('focus', () => cardPreview.setAttribute('data-flipped', 'true'));
+cvc.addEventListener('blur',  () => cardPreview.setAttribute('data-flipped', 'false'));
+
+// === Pay flow ===
+function pay() {
+  const btn = document.getElementById('payBtn');
+
+  // Validate expiry before proceeding
+  const expVal = expiry.value;
+  const expCheck = validateExpiry(expVal);
+  if (!expCheck.valid) {
+    const msg = expCheck.msg || 'Ingresa la fecha de vencimiento';
+    showExpiryError(msg);
+    btn.dataset.shake = 'true';
+    setTimeout(() => { btn.dataset.shake = 'false'; }, 400);
+    expiry.focus();
+    return;
+  }
+
+  btn.dataset.loading = 'true';
+  btn.style.pointerEvents = 'none';
+
+  setTimeout(() => {
+    document.getElementById('modalBackdrop').setAttribute('data-open', 'true');
+    setTimeout(() => {
+      closeModal();
+      btn.dataset.loading = 'false';
+      btn.style.pointerEvents = '';
+      showSuccess();
+    }, 1800);
+  }, 700);
+}
+function closeModal() {
+  document.getElementById('modalBackdrop').setAttribute('data-open', 'false');
+}
+function showSuccess() {
+  document.getElementById('payPanel').style.display = 'none';
+  document.getElementById('successPanel').setAttribute('data-visible', 'true');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function resetCheckout() {
+  document.getElementById('successPanel').setAttribute('data-visible', 'false');
+  document.getElementById('payPanel').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
