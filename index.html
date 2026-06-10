@@ -6,7 +6,7 @@
 <title>Pagar · Secretaría de Educación Pública · Vecnet Pay</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
 <style>
 :root {
   /* Subtly warm neutral palette — Apple-style off-whites */
@@ -157,17 +157,18 @@ a:hover { opacity: 0.65; }
   line-height: 1;
 }
 .sep-text__main {
-  font-family: 'Cinzel', 'Playfair Display', Georgia, "Times New Roman", serif;
+  font-family: var(--brand-name-font, 'Cinzel', 'Playfair Display', Georgia, "Times New Roman", serif);
   font-weight: 700;
   font-size: 22px;
-  color: #7B1E3A;
+  color: var(--brand-name-color, #7B1E3A);
   letter-spacing: 0.02em;
   line-height: 1;
   text-transform: uppercase;
 }
 .sep-text__sub {
   font-size: 9.5px;
-  color: #B98538;
+  color: var(--brand-sub-color, #B98538);
+  font-family: var(--brand-sub-font, 'Inter', sans-serif);
   font-weight: 600;
   letter-spacing: 0.08em;
   line-height: 1.15;
@@ -1805,12 +1806,24 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
 <script>
 // === Merchant configuration (localStorage + URL params) ===
 const DEFAULT_CONFIG = {
-  brand: { name: 'SEP', subtitle: 'Secretaría de Educación Pública', logoType: 'sep', logoSrc: null },
+  brand: {
+    name: 'SEP', subtitle: 'Secretaría de Educación Pública',
+    nameFont: 'cinzel', nameColor: '#7B1E3A',
+    subtitleFont: 'inter', subtitleColor: '#B98538',
+    logoType: 'sep', logoSrc: null,
+  },
   colors: { primaryBg: '', primaryText: '' },
   methods: { card: true, spei: true, oxxo: true, tienda: true },
 };
 const CONFIG_KEY = 'vecnetPayCheckoutConfig';
 const VALID_METHODS = ['card', 'spei', 'oxxo', 'tienda'];
+const FONT_MAP = {
+  inter:      "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+  cinzel:     "'Cinzel', 'Playfair Display', Georgia, serif",
+  playfair:   "'Playfair Display', Georgia, serif",
+  'dm-serif': "'DM Serif Display', Georgia, serif",
+  manrope:    "'Manrope', 'Inter', sans-serif",
+};
 
 function loadStoredConfig() {
   try {
@@ -1839,6 +1852,10 @@ function parseURLConfig() {
   if (p.has('name')) out.brand.name = p.get('name');
   if (p.has('subtitle')) out.brand.subtitle = p.get('subtitle');
   if (p.has('logo')) { out.brand.logoType = 'url'; out.brand.logoSrc = p.get('logo'); }
+  if (p.has('nameFont')) out.brand.nameFont = p.get('nameFont');
+  if (p.has('nameColor')) out.brand.nameColor = p.get('nameColor');
+  if (p.has('subFont')) out.brand.subtitleFont = p.get('subFont');
+  if (p.has('subColor')) out.brand.subtitleColor = p.get('subColor');
   if (p.has('primary')) out.colors.primaryBg = p.get('primary');
   if (p.has('primaryText')) out.colors.primaryText = p.get('primaryText');
   if (p.has('method')) {
@@ -1863,9 +1880,13 @@ function applyBrand(brand) {
   if (nameEl) nameEl.textContent = brand.name || '';
   if (subEl) subEl.textContent = brand.subtitle || '';
   if (logoEl && (brand.logoType === 'url' || brand.logoType === 'data') && brand.logoSrc) {
-    // Replace inline SVG emblem with an <img>
     logoEl.innerHTML = '<img src="' + brand.logoSrc.replace(/"/g, '&quot;') + '" alt="' + (brand.name || 'Logo') + '" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">';
   }
+  const root = document.documentElement;
+  if (brand.nameFont && FONT_MAP[brand.nameFont]) root.style.setProperty('--brand-name-font', FONT_MAP[brand.nameFont]);
+  if (brand.nameColor) root.style.setProperty('--brand-name-color', brand.nameColor);
+  if (brand.subtitleFont && FONT_MAP[brand.subtitleFont]) root.style.setProperty('--brand-sub-font', FONT_MAP[brand.subtitleFont]);
+  if (brand.subtitleColor) root.style.setProperty('--brand-sub-color', brand.subtitleColor);
 }
 
 function applyColors(colors) {
@@ -1908,6 +1929,17 @@ function applyMethodVisibility(methods) {
   applyMethodVisibility(cfg.methods);
   window.__vecnetConfig = cfg;
 })();
+
+// Live config updates from the admin iframe parent (via postMessage)
+window.addEventListener('message', e => {
+  const data = e && e.data;
+  if (!data || data.type !== 'vecnet:config' || !data.payload) return;
+  const cfg = deepMerge(DEFAULT_CONFIG, data.payload);
+  applyBrand(cfg.brand || {});
+  applyColors(cfg.colors || {});
+  applyMethodVisibility(cfg.methods || DEFAULT_CONFIG.methods);
+  window.__vecnetConfig = cfg;
+});
 
 // === Summary accordion: open on desktop, collapsed on mobile ===
 const summaryDetails = document.getElementById('summaryDetails');

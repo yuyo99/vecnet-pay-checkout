@@ -6,7 +6,7 @@
 <title>Vecnet Pay · Configuración del comercio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
 <style>
 :root {
   --bg: #FAFAF8;
@@ -161,6 +161,21 @@ html, body {
   border-color: var(--accent);
   box-shadow: 0 0 0 4px var(--accent-soft);
 }
+
+/* Type row: input + font select + color picker */
+.type-row {
+  display: grid;
+  grid-template-columns: 1fr 170px 140px;
+  gap: 8px;
+  align-items: stretch;
+}
+@media (max-width: 640px) {
+  .type-row { grid-template-columns: 1fr; }
+}
+.type-row__font { height: 42px; padding: 0 12px; cursor: pointer; }
+.type-row__color { height: 42px; padding: 6px 10px 6px 6px; }
+.type-row__color input[type="color"] { width: 28px; height: 28px; }
+.type-row__color .color-wrap__hex { font-size: 11.5px; }
 
 /* Radio chips for logo source */
 .chip-group {
@@ -482,12 +497,26 @@ html, body {
 
       <div class="field">
         <label class="field__label" for="cfgName">Nombre del comercio</label>
-        <input class="input" id="cfgName" type="text" placeholder="Ej. Secretaría de Educación Pública" />
+        <div class="type-row">
+          <input class="input" id="cfgName" type="text" placeholder="Ej. Secretaría de Educación Pública" />
+          <select class="input type-row__font" id="cfgNameFont" aria-label="Tipografía"></select>
+          <div class="color-wrap type-row__color">
+            <input type="color" id="cfgNameColor" value="#7B1E3A" />
+            <span class="color-wrap__hex" id="cfgNameColorHex">#7B1E3A</span>
+          </div>
+        </div>
       </div>
 
       <div class="field">
         <label class="field__label" for="cfgSubtitle">Subtítulo / descriptor</label>
-        <input class="input" id="cfgSubtitle" type="text" placeholder="Ej. Cédula Profesional" />
+        <div class="type-row">
+          <input class="input" id="cfgSubtitle" type="text" placeholder="Ej. Cédula Profesional" />
+          <select class="input type-row__font" id="cfgSubFont" aria-label="Tipografía"></select>
+          <div class="color-wrap type-row__color">
+            <input type="color" id="cfgSubColor" value="#B98538" />
+            <span class="color-wrap__hex" id="cfgSubColorHex">#B98538</span>
+          </div>
+        </div>
       </div>
 
       <div class="field">
@@ -597,10 +626,34 @@ const METHOD_LABELS = {
   tienda: { name: 'Tiendas de conveniencia', sub: '7-Eleven, Farmacias Guadalajara y +' },
 };
 const DEFAULT_CONFIG = {
-  brand: { name: 'SEP', subtitle: 'Secretaría de Educación Pública', logoType: 'sep', logoSrc: null },
+  brand: {
+    name: 'SEP', subtitle: 'Secretaría de Educación Pública',
+    nameFont: 'cinzel', nameColor: '#7B1E3A',
+    subtitleFont: 'inter', subtitleColor: '#B98538',
+    logoType: 'sep', logoSrc: null,
+  },
   colors: { primaryBg: '#0A0A0A', primaryText: '#FFFFFF' },
   methods: { card: true, spei: true, oxxo: true, tienda: true },
 };
+const FONT_OPTIONS = [
+  { key: 'inter',     label: 'Inter',             css: "'Inter', sans-serif" },
+  { key: 'cinzel',    label: 'Cinzel',            css: "'Cinzel', serif" },
+  { key: 'playfair',  label: 'Playfair Display',  css: "'Playfair Display', serif" },
+  { key: 'dm-serif',  label: 'DM Serif Display',  css: "'DM Serif Display', serif" },
+  { key: 'manrope',   label: 'Manrope',           css: "'Manrope', sans-serif" },
+];
+
+function populateFontSelect(sel, selectedKey) {
+  sel.innerHTML = '';
+  for (const opt of FONT_OPTIONS) {
+    const o = document.createElement('option');
+    o.value = opt.key;
+    o.textContent = opt.label;
+    o.style.fontFamily = opt.css;
+    if (opt.key === selectedKey) o.selected = true;
+    sel.appendChild(o);
+  }
+}
 
 function loadConfig() {
   try { const raw = localStorage.getItem(CONFIG_KEY); if (raw) return Object.assign({}, DEFAULT_CONFIG, JSON.parse(raw)); }
@@ -619,6 +672,14 @@ let state = loadConfig();
 function render() {
   document.getElementById('cfgName').value = state.brand.name || '';
   document.getElementById('cfgSubtitle').value = state.brand.subtitle || '';
+  populateFontSelect(document.getElementById('cfgNameFont'), state.brand.nameFont || 'cinzel');
+  populateFontSelect(document.getElementById('cfgSubFont'), state.brand.subtitleFont || 'inter');
+  const nameColor = state.brand.nameColor || '#7B1E3A';
+  const subColor = state.brand.subtitleColor || '#B98538';
+  document.getElementById('cfgNameColor').value = nameColor;
+  document.getElementById('cfgSubColor').value = subColor;
+  document.getElementById('cfgNameColorHex').textContent = nameColor.toUpperCase();
+  document.getElementById('cfgSubColorHex').textContent = subColor.toUpperCase();
   const logoType = state.brand.logoType || 'sep';
   document.querySelector(`input[name="logoType"][value="${logoType}"]`).checked = true;
   document.getElementById('cfgLogoUrl').style.display = logoType === 'url' ? '' : 'none';
@@ -669,8 +730,8 @@ function renderMethods() {
   container.querySelectorAll('input[data-method]').forEach(inp => {
     inp.addEventListener('change', e => {
       state.methods[inp.dataset.method] = inp.checked;
-      // Re-render to recompute the locked toggle
       renderMethods();
+      pushConfigToIframe();
     });
   });
   // Wire up copy buttons
@@ -688,17 +749,42 @@ function renderMethods() {
   });
 }
 
+// === Push config to preview iframe (live, debounced) ===
+let pushTimer = null;
+function pushConfigToIframe() {
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(() => {
+    const iframe = document.getElementById('previewIframe');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ type: 'vecnet:config', payload: state }, '*');
+    }
+  }, 50);
+}
+
 // === Wire up inputs ===
-document.getElementById('cfgName').addEventListener('input', e => { state.brand.name = e.target.value; });
-document.getElementById('cfgSubtitle').addEventListener('input', e => { state.brand.subtitle = e.target.value; });
+document.getElementById('cfgName').addEventListener('input', e => { state.brand.name = e.target.value; pushConfigToIframe(); });
+document.getElementById('cfgSubtitle').addEventListener('input', e => { state.brand.subtitle = e.target.value; pushConfigToIframe(); });
+document.getElementById('cfgNameFont').addEventListener('change', e => { state.brand.nameFont = e.target.value; pushConfigToIframe(); });
+document.getElementById('cfgSubFont').addEventListener('change', e => { state.brand.subtitleFont = e.target.value; pushConfigToIframe(); });
+document.getElementById('cfgNameColor').addEventListener('input', e => {
+  state.brand.nameColor = e.target.value;
+  document.getElementById('cfgNameColorHex').textContent = e.target.value.toUpperCase();
+  pushConfigToIframe();
+});
+document.getElementById('cfgSubColor').addEventListener('input', e => {
+  state.brand.subtitleColor = e.target.value;
+  document.getElementById('cfgSubColorHex').textContent = e.target.value.toUpperCase();
+  pushConfigToIframe();
+});
 document.querySelectorAll('input[name="logoType"]').forEach(r => {
   r.addEventListener('change', e => {
     state.brand.logoType = e.target.value;
     if (e.target.value === 'sep') state.brand.logoSrc = null;
     render();
+    pushConfigToIframe();
   });
 });
-document.getElementById('cfgLogoUrl').addEventListener('input', e => { state.brand.logoSrc = e.target.value; });
+document.getElementById('cfgLogoUrl').addEventListener('input', e => { state.brand.logoSrc = e.target.value; pushConfigToIframe(); });
 document.getElementById('cfgLogoFile').addEventListener('change', e => {
   const f = e.target.files[0];
   if (!f) return;
@@ -707,6 +793,7 @@ document.getElementById('cfgLogoFile').addEventListener('change', e => {
     state.brand.logoSrc = reader.result;
     state.brand.logoType = 'data';
     render();
+    pushConfigToIframe();
   };
   reader.readAsDataURL(f);
 });
@@ -715,12 +802,14 @@ document.getElementById('cfgLogoFile').addEventListener('change', e => {
     if (id === 'cfgPrimaryBg') state.colors.primaryBg = e.target.value;
     else state.colors.primaryText = e.target.value;
     render();
+    pushConfigToIframe();
   });
 });
 document.getElementById('btnResetColors').addEventListener('click', () => {
   state.colors.primaryBg = '#0A0A0A';
   state.colors.primaryText = '#FFFFFF';
   render();
+  pushConfigToIframe();
 });
 
 // === Save / Reset ===
@@ -729,6 +818,10 @@ function reloadPreview() {
   const mode = document.getElementById('previewMode').value;
   const params = new URLSearchParams({ preview: '1', t: String(Date.now()) });
   if (mode) params.set('method', mode);
+  iframe.onload = () => {
+    // Re-apply in-memory state in case the merchant hasn't clicked Guardar yet
+    setTimeout(pushConfigToIframe, 80);
+  };
   iframe.src = CHECKOUT_PATH + '?' + params.toString();
   document.getElementById('previewUrlHint').textContent = CHECKOUT_PATH + '?' + (mode ? 'method=' + mode : 'all');
 }
