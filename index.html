@@ -236,8 +236,11 @@ a:hover { opacity: 0.65; }
   .form { gap: 14px; }
   .input { height: 48px; font-size: 16px; } /* 16px prevents iOS zoom on focus */
 
-  /* Summary collapsible accordion */
-  .summary { border-radius: 18px; }
+  /* Summary fully hidden on mobile — hero amount already covers it */
+  .summary__details { display: none; }
+  .summary { display: none; }
+  /* Legacy collapsible accordion styles (kept for reference, unused) */
+  .summary--legacy { border-radius: 18px; }
   .summary__details > summary {
     padding: 14px 20px;
     min-height: 0;
@@ -789,121 +792,216 @@ a:hover { opacity: 0.65; }
 .legal__trust svg { width: 12px; height: 12px; }
 .legal a { color: var(--ink-700); }
 
-/* === SPEI panel === */
-.spei {
-  background: var(--surface);
-  border-radius: var(--r-card);
-  padding: 28px;
+/* === Alt-method panels (shared) === */
+.method-panel {
   display: flex;
   flex-direction: column;
   gap: 22px;
-  box-shadow: var(--shadow-card);
 }
-.spei__kv { display: flex; flex-direction: column; gap: 4px; }
-.spei__label {
+.method-panel__group { display: flex; flex-direction: column; gap: 12px; }
+.method-panel__heading {
   font-size: 11px;
+  font-weight: 600;
   color: var(--ink-500);
-  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
 }
-.spei__value-row {
+
+/* Payment-detail card */
+.detail-card {
+  background: var(--surface);
+  border: 1px solid var(--ink-200);
+  border-radius: 16px;
+  padding: 16px 18px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
 }
-.spei__value {
+.detail-card__label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.detail-card__value {
   font-family: 'JetBrains Mono', monospace;
   font-size: 18px;
   font-weight: 500;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   color: var(--ink-900);
+  word-break: break-all;
 }
-.spei__value--text { font-family: 'Inter', sans-serif; font-size: 15px; letter-spacing: -0.01em; font-weight: 500; }
-.copy-btn {
-  background: var(--ink-100);
-  border: 1px solid transparent;
-  border-radius: 10px;
-  height: 34px;
-  padding: 0 12px;
+.detail-card__value--text {
   font-family: inherit;
-  font-size: 12px;
+  font-size: 16px;
+  letter-spacing: -0.005em;
   font-weight: 500;
-  color: var(--ink-700);
+}
+.detail-card__hint {
+  font-size: 11.5px;
+  color: var(--ink-500);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  margin-top: 2px;
+}
+.detail-card__copy {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: none;
+  background: var(--ink-100);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: all 160ms var(--ease-std);
+  justify-content: center;
+  color: var(--ink-600);
+  transition: all 200ms var(--ease-std);
 }
-.copy-btn:hover { background: var(--surface); border-color: var(--ink-200); }
-.copy-btn:active { transform: scale(0.97); }
-.spei__countdown {
-  font-size: 13px;
-  color: var(--ink-500);
+.detail-card__copy:hover { background: var(--ink-200); color: var(--ink-900); }
+.detail-card__copy:active { transform: scale(0.92); }
+.detail-card__copy svg { width: 14px; height: 14px; }
+.detail-card__copy[data-copied="true"] {
+  background: var(--ink-900);
+  color: white;
+}
+.detail-card__copy[data-copied="true"]::after {
+  content: "Copiado";
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  background: var(--ink-900);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  animation: fadeInDown 200ms var(--ease-out-expo);
+  pointer-events: none;
+}
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Step list */
+.step-list { display: flex; flex-direction: column; gap: 14px; }
+.step-list__step {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.step-list__num {
+  width: 28px; height: 28px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--ink-200);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+  color: var(--ink-700);
+  font-variant-numeric: tabular-nums;
+}
+.step-list__text {
+  font-size: 14px;
+  color: var(--ink-700);
+  line-height: 1.55;
+  padding-top: 4px;
+  letter-spacing: -0.005em;
+}
+.step-list__text b { color: var(--ink-900); font-weight: 600; }
+
+/* Expiry pill */
+.expiry-pill {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 14px;
+  gap: 10px;
+  padding: 12px 16px;
   background: var(--surface-2);
-  border-radius: 10px;
+  border: 1px solid var(--ink-200);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--ink-700);
+  letter-spacing: -0.005em;
 }
-.spei__countdown::before {
-  content: "";
-  width: 8px; height: 8px;
-  border-radius: 999px;
-  background: var(--success);
-  display: inline-block;
-  box-shadow: 0 0 0 3px var(--success-soft);
-  animation: pulse 2s ease-in-out infinite;
-}
+.expiry-pill svg { width: 16px; height: 16px; color: var(--ink-500); flex-shrink: 0; }
+.expiry-pill b { color: var(--ink-900); font-weight: 600; }
+
+/* CTA stack */
+.cta-stack { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 
-/* === OXXO panel === */
-.oxxo {
+/* OXXO barcode */
+.barcode-card {
   background: var(--surface);
-  border-radius: var(--r-card);
-  padding: 32px;
+  border: 1px solid var(--ink-200);
+  border-radius: 16px;
+  padding: 22px 18px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   align-items: center;
-  text-align: center;
-  box-shadow: var(--shadow-card);
+  gap: 12px;
 }
-.oxxo__barcode {
-  background: white;
-  padding: 20px 22px;
-  border-radius: 12px;
-  border: 1px solid var(--ink-200);
+.barcode {
   display: flex;
   align-items: center;
   gap: 2px;
 }
-.oxxo__bar {
-  width: 2px;
-  background: var(--ink-900);
-  height: 50px;
-}
-.oxxo__bar--w { width: 4px; }
-.oxxo__bar--xw { width: 6px; }
-.oxxo__bar--thin { width: 1px; }
-.oxxo__ref {
+.barcode__bar { width: 2px; background: var(--ink-900); height: 56px; }
+.barcode__bar--w { width: 3px; }
+.barcode__bar--xw { width: 5px; }
+.barcode__bar--thin { width: 1px; }
+.barcode__caption {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 19px;
-  letter-spacing: 0.08em;
-  color: var(--ink-900);
-  font-weight: 500;
-}
-.oxxo__instructions {
-  font-size: 13px;
+  font-size: 11px;
   color: var(--ink-500);
+  letter-spacing: 0.12em;
+}
+
+/* Tienda redirect panel */
+.redirect-panel {
+  background: var(--surface);
+  border: 1px solid var(--ink-200);
+  border-radius: 20px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+.redirect-panel__icon {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: var(--ink-100);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-700);
+  margin-bottom: 4px;
+}
+.redirect-panel__icon svg { width: 26px; height: 26px; }
+.redirect-panel__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.015em;
+}
+.redirect-panel__sub {
+  font-size: 14px;
+  color: var(--ink-500);
+  line-height: 1.55;
   max-width: 360px;
-  line-height: 1.6;
+}
+.redirect-panel__cta-wrap { width: 100%; display: flex; flex-direction: column; gap: 8px; align-items: center; margin-top: 8px; }
+.redirect-panel__microcopy {
+  font-size: 11.5px;
+  color: var(--ink-500);
+  letter-spacing: -0.005em;
 }
 
 /* === Summary === */
+@media (min-width: 921px) {
 .summary {
   position: sticky;
   top: 96px;
@@ -914,6 +1012,7 @@ a:hover { opacity: 0.65; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
 }
 .summary__details { width: 100%; }
 .summary__details > summary {
@@ -1474,78 +1573,132 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
 
       <!-- SPEI panel -->
       <div class="panel" data-panel="spei">
-        <div class="spei">
-          <div class="spei__kv">
-            <div class="spei__label">CLABE interbancaria</div>
-            <div class="spei__value-row">
-              <div class="spei__value">012 180 04567890123 4</div>
-              <button class="copy-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M3 16V5a2 2 0 0 1 2-2h11"/></svg>
-                Copiar
+        <div class="method-panel">
+          <div class="method-panel__group">
+            <div class="detail-card">
+              <div class="detail-card__label">CLABE</div>
+              <div class="detail-card__value">710969000160293735</div>
+              <button class="detail-card__copy" data-copy="710969000160293735" aria-label="Copiar CLABE">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M3 16V5a2 2 0 0 1 2-2h11"/></svg>
               </button>
             </div>
-          </div>
-          <div class="spei__kv">
-            <div class="spei__label">Banco beneficiario</div>
-            <div class="spei__value spei__value--text">BBVA México</div>
-          </div>
-          <div class="spei__kv">
-            <div class="spei__label">Referencia</div>
-            <div class="spei__value-row">
-              <div class="spei__value">28937380016363113518</div>
-              <button class="copy-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M3 16V5a2 2 0 0 1 2-2h11"/></svg>
-                Copiar
+            <div class="detail-card">
+              <div class="detail-card__label">Banco beneficiario</div>
+              <div class="detail-card__value detail-card__value--text">STP — Nvio Pagos México</div>
+              <button class="detail-card__copy" data-copy="STP — Nvio Pagos México" aria-label="Copiar banco">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M3 16V5a2 2 0 0 1 2-2h11"/></svg>
               </button>
             </div>
+            <div class="detail-card">
+              <div class="detail-card__label">Referencia</div>
+              <div class="detail-card__value">28937380016363113518</div>
+              <button class="detail-card__copy" data-copy="28937380016363113518" aria-label="Copiar referencia">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M3 16V5a2 2 0 0 1 2-2h11"/></svg>
+              </button>
+            </div>
+            <div class="detail-card">
+              <div class="detail-card__label">Monto exacto</div>
+              <div class="detail-card__value detail-card__value--text">$1,050.00 MXN</div>
+            </div>
           </div>
-          <div class="spei__kv">
-            <div class="spei__label">Monto exacto</div>
-            <div class="spei__value spei__value--text">$1,050.00 MXN</div>
+
+          <div class="method-panel__group">
+            <div class="method-panel__heading">Cómo pagar</div>
+            <ol class="step-list" style="margin:0; padding:0; list-style:none;">
+              <li class="step-list__step"><div class="step-list__num">1</div><div class="step-list__text">Inicia sesión en tu app de banca en línea.</div></li>
+              <li class="step-list__step"><div class="step-list__num">2</div><div class="step-list__text">Ve a la sección <b>Transferencias / Pagos SPEI</b>.</div></li>
+              <li class="step-list__step"><div class="step-list__num">3</div><div class="step-list__text">Registra los datos del depósito: <b>CLABE</b>, banco beneficiario y referencia.</div></li>
+              <li class="step-list__step"><div class="step-list__num">4</div><div class="step-list__text">Completa la transferencia por el <b>monto exacto</b>.</div></li>
+              <li class="step-list__step"><div class="step-list__num">5</div><div class="step-list__text">El pago se confirmará <b>automáticamente</b> al recibir la transferencia.</div></li>
+            </ol>
           </div>
-          <div class="spei__countdown">Esperando transferencia · Esta CLABE expira en 23h 47m</div>
+
+          <div class="expiry-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <div>Esta CLABE expira el <b>9 de julio de 2026</b> a las 23:59.</div>
+          </div>
         </div>
       </div>
 
       <!-- OXXO panel -->
       <div class="panel" data-panel="oxxo">
-        <div class="oxxo">
-          <div class="oxxo__barcode" aria-label="Código de barras">
-            <div class="oxxo__bar oxxo__bar--w"></div><div class="oxxo__bar"></div>
-            <div class="oxxo__bar oxxo__bar--xw"></div><div class="oxxo__bar oxxo__bar--thin"></div>
-            <div class="oxxo__bar"></div><div class="oxxo__bar oxxo__bar--w"></div>
-            <div class="oxxo__bar oxxo__bar--thin"></div><div class="oxxo__bar"></div>
-            <div class="oxxo__bar oxxo__bar--xw"></div><div class="oxxo__bar"></div>
-            <div class="oxxo__bar oxxo__bar--thin"></div><div class="oxxo__bar oxxo__bar--w"></div>
-            <div class="oxxo__bar"></div><div class="oxxo__bar oxxo__bar--xw"></div>
-            <div class="oxxo__bar oxxo__bar--thin"></div><div class="oxxo__bar"></div>
-            <div class="oxxo__bar oxxo__bar--w"></div><div class="oxxo__bar"></div>
-            <div class="oxxo__bar oxxo__bar--thin"></div><div class="oxxo__bar oxxo__bar--xw"></div>
-            <div class="oxxo__bar"></div><div class="oxxo__bar oxxo__bar--w"></div>
-            <div class="oxxo__bar"></div><div class="oxxo__bar oxxo__bar--thin"></div>
-            <div class="oxxo__bar oxxo__bar--xw"></div><div class="oxxo__bar"></div>
-            <div class="oxxo__bar oxxo__bar--w"></div><div class="oxxo__bar oxxo__bar--thin"></div>
-            <div class="oxxo__bar"></div>
+        <div class="method-panel">
+          <div class="method-panel__group">
+            <div class="detail-card">
+              <div class="detail-card__label">Referencia OXXO Pay</div>
+              <div class="detail-card__value">9320 4503 1163 7290</div>
+              <div class="detail-card__hint">El cajero introducirá este número en su pantalla de venta.</div>
+              <button class="detail-card__copy" data-copy="9320450311637290" aria-label="Copiar referencia">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M3 16V5a2 2 0 0 1 2-2h11"/></svg>
+              </button>
+            </div>
+            <div class="detail-card">
+              <div class="detail-card__label">Monto exacto</div>
+              <div class="detail-card__value detail-card__value--text">$1,050.00 MXN</div>
+            </div>
+            <div class="barcode-card" aria-label="Código de barras">
+              <div class="barcode">
+                <div class="barcode__bar barcode__bar--w"></div><div class="barcode__bar"></div>
+                <div class="barcode__bar barcode__bar--xw"></div><div class="barcode__bar barcode__bar--thin"></div>
+                <div class="barcode__bar"></div><div class="barcode__bar barcode__bar--w"></div>
+                <div class="barcode__bar barcode__bar--thin"></div><div class="barcode__bar"></div>
+                <div class="barcode__bar barcode__bar--xw"></div><div class="barcode__bar"></div>
+                <div class="barcode__bar barcode__bar--thin"></div><div class="barcode__bar barcode__bar--w"></div>
+                <div class="barcode__bar"></div><div class="barcode__bar barcode__bar--xw"></div>
+                <div class="barcode__bar barcode__bar--thin"></div><div class="barcode__bar"></div>
+                <div class="barcode__bar barcode__bar--w"></div><div class="barcode__bar"></div>
+                <div class="barcode__bar barcode__bar--thin"></div><div class="barcode__bar barcode__bar--xw"></div>
+                <div class="barcode__bar"></div><div class="barcode__bar barcode__bar--w"></div>
+                <div class="barcode__bar"></div><div class="barcode__bar barcode__bar--thin"></div>
+                <div class="barcode__bar barcode__bar--xw"></div><div class="barcode__bar"></div>
+                <div class="barcode__bar barcode__bar--w"></div><div class="barcode__bar barcode__bar--thin"></div>
+                <div class="barcode__bar"></div>
+              </div>
+              <div class="barcode__caption">9320 4503 1163 7290</div>
+            </div>
           </div>
-          <div class="oxxo__ref">9320 4503 1163 7290</div>
-          <div class="oxxo__instructions">
-            Lleva este código a cualquier tienda OXXO. El cajero lo escaneará y aceptará tu pago en efectivo. Vence el 23 de mayo de 2026.
+
+          <div class="method-panel__group">
+            <div class="method-panel__heading">Cómo pagar</div>
+            <ol class="step-list" style="margin:0; padding:0; list-style:none;">
+              <li class="step-list__step"><div class="step-list__num">1</div><div class="step-list__text">Acude a cualquier tienda <b>OXXO</b>.</div></li>
+              <li class="step-list__step"><div class="step-list__num">2</div><div class="step-list__text">Indica al cajero que harás un pago de servicio con <b>OXXO Pay</b>.</div></li>
+              <li class="step-list__step"><div class="step-list__num">3</div><div class="step-list__text">Dicta el <b>número de referencia</b> para que lo teclee directamente en la pantalla de venta.</div></li>
+              <li class="step-list__step"><div class="step-list__num">4</div><div class="step-list__text">Realiza el pago en <b>efectivo</b> por el monto exacto.</div></li>
+              <li class="step-list__step"><div class="step-list__num">5</div><div class="step-list__text">Conserva tu comprobante impreso como confirmación de pago.</div></li>
+            </ol>
           </div>
-          <button class="copy-btn" style="height:40px; padding:0 16px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-            Descargar comprobante PDF
-          </button>
+
+          <div class="expiry-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <div>Fecha de expiración: <b>9 de julio de 2026</b>.</div>
+          </div>
+
+          <div class="cta-stack">
+            <button type="button" class="cta">
+              <span class="cta__label">Descargar comprobante PDF</span>
+              <span class="cta__arrow" aria-hidden="true">→</span>
+            </button>
+            <button type="button" class="btn-ghost">Volver al comercio</button>
+          </div>
         </div>
       </div>
 
-      <!-- Tienda panel -->
+      <!-- Tienda panel (redirect) -->
       <div class="panel" data-panel="tienda">
-        <div class="oxxo">
-          <div class="oxxo__instructions">
-            Disponible en <b style="color:var(--ink-900);">7-Eleven</b>, <b style="color:var(--ink-900);">Farmacias Guadalajara</b>, <b style="color:var(--ink-900);">Círculo K</b>, <b style="color:var(--ink-900);">Extra</b> y más de 12,000 puntos afiliados en todo México.
+        <div class="redirect-panel">
+          <div class="redirect-panel__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8v12h16V8"/><path d="M3 8l2-3h14l2 3z"/><path d="M10 20v-4a2 2 0 0 1 4 0v4"/></svg>
           </div>
-          <div class="oxxo__ref">7E-29381-44520</div>
-          <button class="copy-btn" style="height:40px;">Ver tiendas cercanas</button>
+          <div class="redirect-panel__title">Paga en efectivo en más de 12,000 tiendas</div>
+          <div class="redirect-panel__sub">Disponible en 7-Eleven, Farmacias Guadalajara, Círculo K, Extra y otras tiendas afiliadas en todo México.</div>
+          <div class="redirect-panel__cta-wrap">
+            <button type="button" class="cta" style="width:100%;">
+              <span class="cta__label">Continuar al comprobante de pago</span>
+              <span class="cta__arrow" aria-hidden="true">→</span>
+            </button>
+            <div class="redirect-panel__microcopy">Te llevaremos a una página segura para generar tu referencia.</div>
+          </div>
         </div>
       </div>
 
@@ -1667,6 +1820,27 @@ window.addEventListener('resize', () => {
   syncSummaryState();
 });
 syncSummaryState();
+
+// === Copy-to-clipboard for detail cards ===
+document.querySelectorAll('[data-copy]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const val = btn.getAttribute('data-copy');
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(val);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = val;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      btn.dataset.copied = 'true';
+      setTimeout(() => { btn.dataset.copied = 'false'; }, 1400);
+    } catch (e) { /* swallow */ }
+  });
+});
 
 // === Tab switching ===
 document.querySelectorAll('.tab').forEach(tab => {
