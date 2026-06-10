@@ -729,8 +729,8 @@ a:hover { opacity: 0.65; }
   height: 58px;
   border: none;
   border-radius: var(--r-cta);
-  background: linear-gradient(180deg, #1a1a1a, #050505);
-  color: white;
+  background: var(--cta-bg, linear-gradient(180deg, #1a1a1a, #050505));
+  color: var(--cta-fg, white);
   font-family: inherit;
   font-size: 16px;
   font-weight: 600;
@@ -1346,7 +1346,7 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
 <!-- Header -->
 <header class="header">
   <div class="header__merchant">
-    <div class="sep-emblem" aria-label="Escudo Nacional de México">
+    <div class="sep-emblem" id="merchantLogo" aria-label="Logo del comercio">
       <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
         <!-- Outer ring with "ESTADOS UNIDOS MEXICANOS" text effect -->
         <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" stroke-width="1.5"/>
@@ -1400,8 +1400,8 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
       </svg>
     </div>
     <div class="sep-text">
-      <div class="sep-text__main">SEP</div>
-      <div class="sep-text__sub">Secretaría de Educación Pública</div>
+      <div class="sep-text__main" id="merchantName">SEP</div>
+      <div class="sep-text__sub" id="merchantSubtitle">Secretaría de Educación Pública</div>
     </div>
   </div>
   <div class="header__trust">
@@ -1803,6 +1803,112 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
 </div>
 
 <script>
+// === Merchant configuration (localStorage + URL params) ===
+const DEFAULT_CONFIG = {
+  brand: { name: 'SEP', subtitle: 'Secretaría de Educación Pública', logoType: 'sep', logoSrc: null },
+  colors: { primaryBg: '', primaryText: '' },
+  methods: { card: true, spei: true, oxxo: true, tienda: true },
+};
+const CONFIG_KEY = 'vecnetPayCheckoutConfig';
+const VALID_METHODS = ['card', 'spei', 'oxxo', 'tienda'];
+
+function loadStoredConfig() {
+  try {
+    const raw = localStorage.getItem(CONFIG_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) { return null; }
+}
+
+function deepMerge(a, b) {
+  if (!b) return a;
+  const out = { ...a };
+  for (const k of Object.keys(b)) {
+    if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k])) {
+      out[k] = deepMerge(a[k] || {}, b[k]);
+    } else if (b[k] !== undefined && b[k] !== null && b[k] !== '') {
+      out[k] = b[k];
+    }
+  }
+  return out;
+}
+
+function parseURLConfig() {
+  const p = new URLSearchParams(window.location.search);
+  const out = { brand: {}, colors: {}, methods: {} };
+  if (p.has('name')) out.brand.name = p.get('name');
+  if (p.has('subtitle')) out.brand.subtitle = p.get('subtitle');
+  if (p.has('logo')) { out.brand.logoType = 'url'; out.brand.logoSrc = p.get('logo'); }
+  if (p.has('primary')) out.colors.primaryBg = p.get('primary');
+  if (p.has('primaryText')) out.colors.primaryText = p.get('primaryText');
+  if (p.has('method')) {
+    const m = p.get('method');
+    if (VALID_METHODS.includes(m)) {
+      out.methods = { card: false, spei: false, oxxo: false, tienda: false, [m]: true };
+    }
+  } else if (p.has('methods')) {
+    const list = p.get('methods').split(',').map(s => s.trim()).filter(m => VALID_METHODS.includes(m));
+    if (list.length) {
+      out.methods = { card: false, spei: false, oxxo: false, tienda: false };
+      list.forEach(m => out.methods[m] = true);
+    }
+  }
+  return out;
+}
+
+function applyBrand(brand) {
+  const nameEl = document.getElementById('merchantName');
+  const subEl = document.getElementById('merchantSubtitle');
+  const logoEl = document.getElementById('merchantLogo');
+  if (nameEl) nameEl.textContent = brand.name || '';
+  if (subEl) subEl.textContent = brand.subtitle || '';
+  if (logoEl && (brand.logoType === 'url' || brand.logoType === 'data') && brand.logoSrc) {
+    // Replace inline SVG emblem with an <img>
+    logoEl.innerHTML = '<img src="' + brand.logoSrc.replace(/"/g, '&quot;') + '" alt="' + (brand.name || 'Logo') + '" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">';
+  }
+}
+
+function applyColors(colors) {
+  const root = document.documentElement;
+  if (colors.primaryBg) root.style.setProperty('--cta-bg', colors.primaryBg);
+  if (colors.primaryText) root.style.setProperty('--cta-fg', colors.primaryText);
+}
+
+function applyMethodVisibility(methods) {
+  const enabled = VALID_METHODS.filter(m => methods[m]);
+  // Hide tab + panel for any disabled method
+  document.querySelectorAll('.tab').forEach(t => {
+    t.style.display = methods[t.dataset.tab] ? '' : 'none';
+  });
+  document.querySelectorAll('.panel').forEach(p => {
+    if (!methods[p.dataset.panel]) p.style.display = 'none';
+  });
+  // If only one method enabled, hide the tab strip entirely + activate that panel
+  const tabsEl = document.querySelector('.tabs');
+  if (enabled.length === 1) {
+    if (tabsEl) tabsEl.style.display = 'none';
+    document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === enabled[0]));
+    document.querySelectorAll('.panel').forEach(p => p.setAttribute('data-active', p.dataset.panel === enabled[0]));
+  } else if (enabled.length > 1) {
+    // Ensure the first-enabled tab is active if the current active is disabled
+    const activeTab = document.querySelector('.tab[aria-selected="true"]');
+    if (!activeTab || !methods[activeTab.dataset.tab]) {
+      document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === enabled[0]));
+      document.querySelectorAll('.panel').forEach(p => p.setAttribute('data-active', p.dataset.panel === enabled[0]));
+    }
+  }
+}
+
+(function initConfig() {
+  const stored = loadStoredConfig();
+  const url = parseURLConfig();
+  const cfg = deepMerge(deepMerge(DEFAULT_CONFIG, stored), url);
+  applyBrand(cfg.brand);
+  applyColors(cfg.colors);
+  applyMethodVisibility(cfg.methods);
+  window.__vecnetConfig = cfg;
+})();
+
 // === Summary accordion: open on desktop, collapsed on mobile ===
 const summaryDetails = document.getElementById('summaryDetails');
 const syncSummaryState = () => {
