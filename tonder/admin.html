@@ -504,7 +504,7 @@ html, body {
       <div class="field">
         <label class="field__label" for="cfgName">Nombre del comercio</label>
         <div class="type-row">
-          <input class="input" id="cfgName" type="text" placeholder="Ej. Secretaría de Educación Pública" />
+          <input class="input" id="cfgName" type="text" placeholder="Ej. BC.GAME" />
           <select class="input type-row__font" id="cfgNameFont" aria-label="Tipografía"></select>
           <div class="color-wrap type-row__color">
             <input type="color" id="cfgNameColor" value="#7B1E3A" />
@@ -516,7 +516,7 @@ html, body {
       <div class="field">
         <label class="field__label" for="cfgSubtitle">Subtítulo / descriptor</label>
         <div class="type-row">
-          <input class="input" id="cfgSubtitle" type="text" placeholder="Ej. Cédula Profesional" />
+          <input class="input" id="cfgSubtitle" type="text" placeholder="Ej. Plataforma de juegos" />
           <select class="input type-row__font" id="cfgSubFont" aria-label="Tipografía"></select>
           <div class="color-wrap type-row__color">
             <input type="color" id="cfgSubColor" value="#B98538" />
@@ -629,9 +629,9 @@ const METHOD_LABELS = {
 };
 const DEFAULT_CONFIG = {
   brand: {
-    name: 'SEP', subtitle: 'Secretaría de Educación Pública',
-    nameFont: 'cinzel', nameColor: '#7B1E3A',
-    subtitleFont: 'inter', subtitleColor: '#B98538',
+    name: 'BC.GAME', subtitle: 'Plataforma de juegos',
+    nameFont: 'inter', nameColor: '#0A0A0A',
+    subtitleFont: 'inter', subtitleColor: '#71717A',
     logoType: 'sep', logoSrc: null,
   },
   colors: { primaryBg: '#0A0A0A', primaryText: '#FFFFFF' },
@@ -674,10 +674,10 @@ let state = loadConfig();
 function render() {
   document.getElementById('cfgName').value = state.brand.name || '';
   document.getElementById('cfgSubtitle').value = state.brand.subtitle || '';
-  populateFontSelect(document.getElementById('cfgNameFont'), state.brand.nameFont || 'cinzel');
+  populateFontSelect(document.getElementById('cfgNameFont'), state.brand.nameFont || 'inter');
   populateFontSelect(document.getElementById('cfgSubFont'), state.brand.subtitleFont || 'inter');
-  const nameColor = state.brand.nameColor || '#7B1E3A';
-  const subColor = state.brand.subtitleColor || '#B98538';
+  const nameColor = state.brand.nameColor || '#0A0A0A';
+  const subColor = state.brand.subtitleColor || '#71717A';
   document.getElementById('cfgNameColor').value = nameColor;
   document.getElementById('cfgSubColor').value = subColor;
   document.getElementById('cfgNameColorHex').textContent = nameColor.toUpperCase();

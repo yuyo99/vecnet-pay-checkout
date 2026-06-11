@@ -306,10 +306,10 @@ body {
     <section>
       <div class="section__heading">Comercio</div>
       <div class="merchant">
-        <div class="merchant__emblem" id="rcptEmblem">SEP</div>
+        <div class="merchant__emblem" id="rcptEmblem">BC</div>
         <div class="merchant__info">
-          <div class="merchant__name" id="rcptMerchantName">Secretaría de Educación Pública</div>
-          <div class="merchant__meta" id="rcptMerchantConcept">Cédula Profesional</div>
+          <div class="merchant__name" id="rcptMerchantName">BC.GAME</div>
+          <div class="merchant__meta" id="rcptMerchantConcept">Depósito de saldo</div>
         </div>
       </div>
     </section>
@@ -407,7 +407,7 @@ body {
   if (m.name) document.getElementById('rcptMerchantName').textContent = m.name;
   if (m.concept) document.getElementById('rcptMerchantConcept').textContent = m.concept;
   // Compact emblem text — first 3 letters or initials
-  const initials = (m.name || 'SEP').split(/\s+/).map(w => w[0]).filter(Boolean).slice(0, 3).join('').toUpperCase() || 'SEP';
+  const initials = (m.name || 'BC').replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase() || 'BC';
   document.getElementById('rcptEmblem').textContent = initials;
   // Payment
   if (p.amount) {
