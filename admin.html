@@ -576,6 +576,7 @@ html, body {
     </section>
 
     <div class="actions">
+      <button type="button" class="btn" id="btnClearSavedCards" title="Borra las tarjetas guardadas en este navegador">Limpiar tarjetas guardadas</button>
       <button type="button" class="btn btn--danger" id="btnReset">Restablecer</button>
       <button type="button" class="btn btn--primary" id="btnSave">Guardar y previsualizar</button>
     </div>
@@ -828,6 +829,11 @@ function reloadPreview() {
 
 document.getElementById('btnSave').addEventListener('click', () => {
   saveConfig(state);
+  reloadPreview();
+});
+document.getElementById('btnClearSavedCards').addEventListener('click', () => {
+  if (!confirm('¿Borrar todas las tarjetas guardadas en este navegador?')) return;
+  localStorage.removeItem('vecnetSavedCards');
   reloadPreview();
 });
 document.getElementById('btnReset').addEventListener('click', () => {

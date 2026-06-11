@@ -1387,6 +1387,199 @@ a:hover { opacity: 0.65; }
 }
 .cta[data-shake="true"] { animation: shake 320ms var(--ease-std); }
 
+/* === Saved cards === */
+.saved-cards-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.saved-cards-panel__heading {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.saved-cards-list { display: flex; flex-direction: column; gap: 10px; }
+
+.saved-card-row {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  gap: 14px;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--ink-200);
+  border-radius: 16px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: all 200ms var(--ease-std);
+  width: 100%;
+}
+.saved-card-row:hover {
+  border-color: var(--ink-400);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+.saved-card-row[data-selected="true"] {
+  border-color: var(--ink-900);
+  box-shadow: 0 0 0 1px var(--ink-900), var(--shadow-card);
+  cursor: default;
+}
+.saved-card-row[data-expired="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.saved-card-row[data-expired="true"]:hover { transform: none; box-shadow: none; }
+
+.saved-card-row__brand {
+  width: 44px;
+  height: 28px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--ink-100);
+}
+.saved-card-row__brand svg { width: 100%; height: 100%; object-fit: contain; }
+.saved-card-row__brand--fallback {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-700);
+  font-weight: 600;
+}
+.saved-card-row__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.saved-card-row__primary {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.005em;
+}
+.saved-card-row__primary .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em; font-weight: 500; }
+.saved-card-row__secondary {
+  font-size: 12px;
+  color: var(--ink-500);
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.saved-card-row__exp {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-500);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.saved-card-row__expired-tag {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--danger);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+.use-new-card-link {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink-600);
+  cursor: pointer;
+  padding: 6px 8px;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 6px;
+  transition: color 160ms, background 160ms;
+}
+.use-new-card-link:hover { color: var(--ink-900); background: var(--ink-100); }
+
+.saved-cvv-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 4px;
+}
+.saved-cvv-block .field { max-width: 200px; }
+.saved-cvv-block__hint {
+  font-size: 12px;
+  color: var(--ink-500);
+  letter-spacing: -0.005em;
+  margin-top: 2px;
+}
+.back-link {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--ink-600);
+  cursor: pointer;
+  padding: 6px 8px;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  transition: color 160ms;
+}
+.back-link:hover { color: var(--ink-900); }
+
+/* Save-card toggle (under the full form) */
+.save-card-toggle {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  align-items: start;
+  cursor: pointer;
+  padding: 4px 0 8px;
+  user-select: none;
+}
+.save-card-toggle input { display: none; }
+.save-card-toggle__check {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  border: 1.5px solid var(--ink-300);
+  background: var(--surface);
+  position: relative;
+  transition: all 160ms var(--ease-std);
+  flex-shrink: 0;
+}
+.save-card-toggle input:checked + .save-card-toggle__check {
+  background: var(--ink-900);
+  border-color: var(--ink-900);
+}
+.save-card-toggle input:checked + .save-card-toggle__check::after {
+  content: "";
+  position: absolute;
+  left: 6px; top: 2px;
+  width: 5px; height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.save-card-toggle:hover .save-card-toggle__check { border-color: var(--ink-500); }
+.save-card-toggle__text { display: flex; flex-direction: column; gap: 2px; padding-top: 1px; }
+.save-card-toggle__main {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink-900);
+  letter-spacing: -0.005em;
+}
+.save-card-toggle__sub {
+  font-size: 11.5px;
+  color: var(--ink-500);
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+
 .spinner-ring { animation: spin 0.9s linear infinite; color: var(--ink-500); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -1533,6 +1726,50 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
       <!-- Card panel -->
       <div class="panel" data-panel="card" data-active="true">
 
+        <!-- Saved cards (returning user — hidden when empty) -->
+        <div id="savedCardsPanel" style="display:none;">
+          <div class="saved-cards-panel">
+            <div class="saved-cards-panel__heading">Tarjetas guardadas</div>
+            <div class="saved-cards-list" id="savedCardsList"></div>
+            <button type="button" class="use-new-card-link" id="useNewCardBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Usar una tarjeta nueva
+            </button>
+          </div>
+        </div>
+
+        <!-- Saved-card selected detail (CVV-only) -->
+        <div id="savedCvvBlock" style="display:none;">
+          <div class="saved-cards-list" id="savedSelectedSlot"></div>
+          <div class="saved-cvv-block">
+            <div class="field" style="max-width:200px;">
+              <label class="field__label" for="savedCvc">CVC</label>
+              <div class="field__input-wrap">
+                <input class="input" id="savedCvc" type="text" placeholder="•••" inputmode="numeric" autocomplete="cc-csc" maxlength="4" aria-describedby="savedCvcError" />
+                <div class="field__suffix">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+              </div>
+              <span class="field__error" id="savedCvcError" aria-live="polite"></span>
+              <div class="saved-cvv-block__hint">Confirma el código de tu tarjeta.</div>
+            </div>
+            <div class="cta-wrap">
+              <button type="button" class="cta" id="savedPayBtn" onclick="paySaved();">
+                <span class="cta__spinner" aria-hidden="true"></span>
+                <span class="cta__label" id="savedPayLabel">Pagar $1,050.00 MXN</span>
+                <span class="cta__arrow" aria-hidden="true">→</span>
+              </button>
+            </div>
+            <button type="button" class="back-link" id="backToSavedListBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="15 18 9 12 15 6"/></svg>
+              Usar otra tarjeta
+            </button>
+          </div>
+        </div>
+
+        <!-- Full card form (default for first-time, or fallback) -->
+        <div id="cardFormBlock">
+
         <div class="card-preview" id="cardPreview">
           <div class="card-preview__inner">
             <!-- Front -->
@@ -1618,6 +1855,15 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
             </div>
           </div>
 
+          <label class="save-card-toggle">
+            <input type="checkbox" id="saveCard" checked />
+            <span class="save-card-toggle__check"></span>
+            <span class="save-card-toggle__text">
+              <span class="save-card-toggle__main">Guardar esta tarjeta para futuras compras</span>
+              <span class="save-card-toggle__sub">Solo guardamos los últimos 4 dígitos y la fecha. Nunca el CVC.</span>
+            </span>
+          </label>
+
           <div class="cta-wrap">
             <button type="submit" class="cta" id="payBtn">
               <span class="cta__spinner" aria-hidden="true"></span>
@@ -1626,6 +1872,8 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
             </button>
           </div>
         </form>
+
+        </div><!-- /#cardFormBlock -->
 
       </div>
 
@@ -2198,6 +2446,151 @@ cvc.addEventListener('input', e => {
 cvc.addEventListener('focus', () => cardPreview.setAttribute('data-flipped', 'true'));
 cvc.addEventListener('blur',  () => cardPreview.setAttribute('data-flipped', 'false'));
 
+// === Saved cards (one-click with CVV only) ===
+const SAVED_CARDS_KEY = 'vecnetSavedCards';
+let SELECTED_SAVED_ID = null;
+
+const BRAND_SVG_MAP = {
+  VISA: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#2100C4" d="M45,35c0,2.209-1.791,4-4,4H7c-2.209,0-4-1.791-4-4V13c0-2.209,1.791-4,4-4h34c2.209,0,4,1.791,4,4V35z"/><path fill="#FFFFFF" d="M15.186,19l-2.626,7.832c0,0-0.667-3.313-0.733-3.729c-1.495-3.411-3.701-3.221-3.701-3.221L10.726,30v-0.002h3.161L18.258,19H15.186z M17.689,30h2.871l1.736-11h-2.907L17.689,30z M38.008,19h-3.021l-4.71,11h2.852l0.588-1.571h3.596L37.619,30h2.613L38.008,19z M34.513,26.328l1.563-4.157l0.818,4.157H34.513z M26.369,22.206c0-0.606,0.498-1.057,1.926-1.057c0.928,0,1.991,0.674,1.991,0.674l0.466-2.309c0,0-1.358-0.515-2.691-0.515c-3.019,0-4.576,1.444-4.576,3.272c0,3.306,3.979,2.853,3.979,4.551c0,0.291-0.231,0.964-1.888,0.964c-1.662,0-2.759-0.609-2.759-0.609l-0.495,2.216c0,0,1.063,0.606,3.117,0.606c2.059,0,4.915-1.54,4.915-3.752C30.354,23.586,26.369,23.394,26.369,22.206z"/><path fill="#F5BC00" d="M12.212,24.945l-0.966-4.748c0,0-0.437-1.029-1.573-1.029s-4.44,0-4.44,0S10.894,20.84,12.212,24.945z"/></svg>',
+  MC: '<svg viewBox="0 0 40 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" fill="#EB001B"/><circle cx="27" cy="13" r="12" fill="#F79E1B"/><path fill="#FF5F00" d="M 20 3.25 A 12 12 0 0 1 20 22.75 A 12 12 0 0 1 20 3.25 Z"/></svg>',
+  AMEX: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#016dd1" d="M6,10c0-2.209,1.791-4,4-4h28c2.209,0,4,1.791,4,4v25.5c0,2.209-1.791,4-4,4H10c-2.209,0-4-1.791-4-4V10z"/><polygon fill="#fff" points="38.413,34.5 35.096,31.179 31.79,34.5 28.225,34.5 28.203,34.5 19.225,34.5 19.225,24.5 25.016,24.5 25.67,24.5 28.225,24.5 30.633,24.5 31.802,24.5 35.084,27.697 38.401,24.5 42,24.5 36.941,29.35 42,34.5"/></svg>',
+};
+const BRAND_NAME = { VISA: 'Visa', MC: 'Mastercard', AMEX: 'American Express' };
+
+function loadSavedCards() {
+  try { return JSON.parse(localStorage.getItem(SAVED_CARDS_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function persistSavedCards(list) {
+  localStorage.setItem(SAVED_CARDS_KEY, JSON.stringify(list));
+}
+function saveCardToStorage(card) {
+  const list = loadSavedCards();
+  if (list.some(c => c.brand === card.brand && c.last4 === card.last4)) return;
+  list.unshift(Object.assign({ id: 'card_' + Math.random().toString(36).slice(2, 7), addedAt: '2026-05-25' }, card));
+  persistSavedCards(list);
+}
+
+function isCardExpired(card) {
+  // Compare card expiry (YY/MM) against current month/year
+  const cy = NOW.getFullYear() % 100;
+  const cm = NOW.getMonth() + 1;
+  const ey = parseInt(card.expYear, 10);
+  const em = parseInt(card.expMonth, 10);
+  return ey < cy || (ey === cy && em < cm);
+}
+
+function renderBrandBadge(brand) {
+  return BRAND_SVG_MAP[brand] || ('<span class="saved-card-row__brand--fallback">CARD</span>');
+}
+
+function buildSavedCardRow(card, opts) {
+  const expired = isCardExpired(card);
+  const brandName = BRAND_NAME[card.brand] || 'Tarjeta';
+  return (
+    '<button type="button" class="saved-card-row" data-card-id="' + card.id + '"' +
+      (expired ? ' data-expired="true"' : '') + '>' +
+      '<span class="saved-card-row__brand">' + renderBrandBadge(card.brand) + '</span>' +
+      '<span class="saved-card-row__info">' +
+        '<span class="saved-card-row__primary">' + brandName + ' <span class="mono">•••• ' + card.last4 + '</span></span>' +
+        '<span class="saved-card-row__secondary">' + (card.holderName || '') + '</span>' +
+        (expired ? '<span class="saved-card-row__expired-tag">Tarjeta vencida</span>' : '') +
+      '</span>' +
+      '<span class="saved-card-row__exp">Vence ' + card.expMonth + ' / ' + card.expYear + '</span>' +
+    '</button>'
+  );
+}
+
+function renderSavedCardsList() {
+  const list = loadSavedCards();
+  const panel = document.getElementById('savedCardsPanel');
+  const formBlock = document.getElementById('cardFormBlock');
+  const listEl = document.getElementById('savedCardsList');
+  if (!panel || !formBlock || !listEl) return;
+  if (!list.length) {
+    panel.style.display = 'none';
+    formBlock.style.display = '';
+    return;
+  }
+  panel.style.display = '';
+  formBlock.style.display = 'none';
+  listEl.innerHTML = list.map(c => buildSavedCardRow(c)).join('');
+  // Wire click on rows
+  listEl.querySelectorAll('.saved-card-row').forEach(row => {
+    if (row.dataset.expired === 'true') return;
+    row.addEventListener('click', () => selectSavedCard(row.dataset.cardId));
+  });
+}
+
+function selectSavedCard(id) {
+  const list = loadSavedCards();
+  const card = list.find(c => c.id === id);
+  if (!card) return;
+  SELECTED_SAVED_ID = id;
+  document.getElementById('savedCardsPanel').style.display = 'none';
+  document.getElementById('cardFormBlock').style.display = 'none';
+  const block = document.getElementById('savedCvvBlock');
+  block.style.display = '';
+  document.getElementById('savedSelectedSlot').innerHTML = buildSavedCardRow(Object.assign({}, card)).replace('<button type="button"', '<div data-selected="true"').replace('</button>', '</div>').replace(/class="saved-card-row"/, 'class="saved-card-row" data-selected="true"');
+  setTimeout(() => { document.getElementById('savedCvc').focus(); }, 60);
+}
+
+function showFullCardForm() {
+  SELECTED_SAVED_ID = null;
+  document.getElementById('savedCvvBlock').style.display = 'none';
+  document.getElementById('savedCardsPanel').style.display = 'none';
+  document.getElementById('cardFormBlock').style.display = '';
+}
+
+function backToSavedList() {
+  SELECTED_SAVED_ID = null;
+  document.getElementById('savedCvvBlock').style.display = 'none';
+  renderSavedCardsList();
+}
+
+// Wire the toolbar buttons (idempotent — safe even if elements absent)
+document.addEventListener('DOMContentLoaded', () => {
+  const useNew = document.getElementById('useNewCardBtn');
+  const backBtn = document.getElementById('backToSavedListBtn');
+  if (useNew) useNew.addEventListener('click', showFullCardForm);
+  if (backBtn) backBtn.addEventListener('click', backToSavedList);
+});
+
+// Saved-card CVV input — digits only, validate inline
+(function wireSavedCvc() {
+  const el = document.getElementById('savedCvc');
+  if (!el) return;
+  el.addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    if (el.classList.contains('is-error')) {
+      const list = loadSavedCards();
+      const card = list.find(c => c.id === SELECTED_SAVED_ID);
+      const isAmex = card && card.brand === 'AMEX';
+      const need = isAmex ? 4 : 3;
+      if (e.target.value.length === need) setSavedCvcError(null);
+    }
+  });
+})();
+
+function setSavedCvcError(msg) {
+  const inp = document.getElementById('savedCvc');
+  const err = document.getElementById('savedCvcError');
+  if (msg) { inp.classList.add('is-error'); err.textContent = msg; err.dataset.visible = 'true'; }
+  else { inp.classList.remove('is-error'); err.dataset.visible = 'false'; err.textContent = ''; }
+}
+
+// === Demo seed: ?seedDemo=cards ===
+(function maybeSeedDemo() {
+  const sp = new URLSearchParams(window.location.search);
+  if (sp.get('seedDemo') !== 'cards') return;
+  if (loadSavedCards().length) return;
+  const seed = [
+    { brand: 'VISA', last4: '4242', expMonth: '12', expYear: '27', holderName: 'Yuyo Vecnet' },
+    { brand: 'MC',   last4: '5555', expMonth: '03', expYear: '28', holderName: 'Yuyo Vecnet' },
+  ];
+  seed.forEach(c => saveCardToStorage(c));
+})();
+
 // === Per-field validation (Spanish) ===
 const CARD_ERRORS = {
   cardholder: 'Ingresa el nombre como aparece en la tarjeta',
@@ -2330,16 +2723,66 @@ function nowFmt() {
   return '25 may 2026 · 13:47';
 }
 
-function showSuccess() {
-  const cn = document.getElementById('cardnumber').value;
-  const brand = detectBrand(cn) || 'CARD';
-  const brandName = brand === 'VISA' ? 'Visa' : brand === 'MC' ? 'Mastercard' : brand === 'AMEX' ? 'Amex' : 'Tarjeta';
-  document.getElementById('successMethod').textContent = brandName + ' •••• ' + formatLast4(cn);
+function showSuccess(prefilled) {
+  let brand, brandName, last4;
+  if (prefilled) {
+    brand = prefilled.brand;
+    brandName = BRAND_NAME[brand] || 'Tarjeta';
+    last4 = prefilled.last4;
+  } else {
+    const cn = document.getElementById('cardnumber').value;
+    brand = detectBrand(cn) || 'CARD';
+    brandName = BRAND_NAME[brand] || 'Tarjeta';
+    last4 = formatLast4(cn);
+
+    // Persist card if save-toggle is on
+    const saveOn = document.getElementById('saveCard')?.checked;
+    if (saveOn) {
+      const exp = (document.getElementById('expiry').value || '').replace(/\s/g, '').match(/^(\d{2})\/(\d{2})$/);
+      const holder = (document.getElementById('cardholder').value || '').trim();
+      if (exp && brand && holder) {
+        saveCardToStorage({ brand, last4, expMonth: exp[1], expYear: exp[2], holderName: holder });
+      }
+    }
+  }
+  document.getElementById('successMethod').textContent = brandName + ' •••• ' + last4;
   document.getElementById('successDate').textContent = nowFmt();
   document.getElementById('payPanel').style.display = 'none';
   document.getElementById('failurePanel').setAttribute('data-visible', 'false');
   document.getElementById('successPanel').setAttribute('data-visible', 'true');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// === Pay with a previously-saved card (CVV-only) ===
+function paySaved() {
+  const list = loadSavedCards();
+  const card = list.find(c => c.id === SELECTED_SAVED_ID);
+  if (!card) return;
+  const cvc = (document.getElementById('savedCvc').value || '').replace(/\D/g, '');
+  const need = card.brand === 'AMEX' ? 4 : 3;
+  if (cvc.length !== need) {
+    setSavedCvcError('Código CVC inválido');
+    const btn = document.getElementById('savedPayBtn');
+    btn.dataset.shake = 'true';
+    setTimeout(() => { btn.dataset.shake = 'false'; }, 400);
+    document.getElementById('savedCvc').focus();
+    return;
+  }
+  setSavedCvcError(null);
+  const btn = document.getElementById('savedPayBtn');
+  btn.dataset.loading = 'true';
+  btn.style.pointerEvents = 'none';
+  setTimeout(() => {
+    document.getElementById('modalBackdrop').setAttribute('data-open', 'true');
+    setTimeout(() => {
+      closeModal();
+      btn.dataset.loading = 'false';
+      btn.style.pointerEvents = '';
+      const outcome = simulateOutcome(card.last4);
+      if (outcome.ok) showSuccess({ brand: card.brand, last4: card.last4 });
+      else showFailure(outcome.reason || 'Tu banco rechazó la operación');
+    }, 1800);
+  }, 700);
 }
 
 function showFailure(reason) {
@@ -2368,8 +2811,12 @@ function resetCheckout() {
   document.getElementById('successPanel').setAttribute('data-visible', 'false');
   document.getElementById('failurePanel').setAttribute('data-visible', 'false');
   document.getElementById('payPanel').style.display = '';
+  renderSavedCardsList();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+// Initial render on boot (after config has applied)
+renderSavedCardsList();
 </script>
 
 </body>
