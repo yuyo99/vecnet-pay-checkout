@@ -140,14 +140,16 @@ body {
 .merchant__emblem {
   width: 44px; height: 44px;
   border-radius: 12px;
-  background: #00C26B;
+  background: #0E0F0E;
   display: inline-flex; align-items: center; justify-content: center;
   color: #FFFFFF;
   font-family: 'Inter', sans-serif;
   font-weight: 800;
   font-size: 16px;
   letter-spacing: -0.02em;
+  padding: 6px;
 }
+.merchant__emblem svg { width: 100%; height: 100%; }
 .merchant__info { display: flex; flex-direction: column; gap: 2px; }
 .merchant__name { font-size: 16px; font-weight: 600; color: var(--ink-900); letter-spacing: -0.01em; }
 .merchant__meta { font-size: 12.5px; color: var(--ink-500); }
@@ -306,7 +308,7 @@ body {
     <section>
       <div class="section__heading">Comercio</div>
       <div class="merchant">
-        <div class="merchant__emblem" id="rcptEmblem">BC</div>
+        <div class="merchant__emblem" id="rcptEmblem"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bcgrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8DE94F"/><stop offset="1" stop-color="#3FBF57"/></linearGradient></defs><path fill="url(#bcgrad)" d="M52 14 C40 8 26 14 21 28 C17 41 17 56 22 68 C28 82 39 90 51 90 C63 90 74 82 79 68 C84 55 84 40 80 28 C78 21 73 16 66 14 L60 22 L56 8 Z"/><path d="M63 47 A15 15 0 1 0 63 65" fill="none" stroke="#0E0F0E" stroke-width="10" stroke-linecap="round"/></svg></div>
         <div class="merchant__info">
           <div class="merchant__name" id="rcptMerchantName">BC.GAME</div>
           <div class="merchant__meta" id="rcptMerchantConcept">Depósito de saldo</div>
@@ -407,8 +409,11 @@ body {
   if (m.name) document.getElementById('rcptMerchantName').textContent = m.name;
   if (m.concept) document.getElementById('rcptMerchantConcept').textContent = m.concept;
   // Compact emblem text — first 3 letters or initials
-  const initials = (m.name || 'BC').replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase() || 'BC';
-  document.getElementById('rcptEmblem').textContent = initials;
+  // Keep the BC.GAME shield SVG for the default merchant; initials only for custom merchants
+  if (m.name && m.name !== 'BC.GAME') {
+    const initials = m.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2).toUpperCase() || 'BC';
+    document.getElementById('rcptEmblem').textContent = initials;
+  }
   // Payment
   if (p.amount) {
     const parts = p.amount.match(/^(\$?[\d,.]+)\s*([A-Z]{0,3})/);
