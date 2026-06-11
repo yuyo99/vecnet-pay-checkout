@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Tonder · Configuración del comercio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #FAFAF8;
+  --bg-2: #F5F5F3;
+  --surface: #FFFFFF;
+  --surface-2: #F7F7F5;
+  --ink-950: #050505;
+  --ink-900: #0A0A0A;
+  --ink-800: #18181B;
+  --ink-700: #3F3F46;
+  --ink-600: #52525B;
+  --ink-500: #71717A;
+  --ink-400: #A1A1AA;
+  --ink-300: #D4D4D8;
+  --ink-200: #E7E7E4;
+  --ink-100: #F1F1EE;
+  --accent: #14B8A6;
+  --accent-soft: rgba(20,184,166,0.12);
+  --success: #15803D;
+  --danger: #B91C1C;
+  --warn-bg: #FEF6E4;
+  --warn-fg: #92681B;
+  --r-card: 20px;
+  --r-input: 10px;
+  --r-cta: 12px;
+  --shadow-card:
+    0 1px 1px rgba(0,0,0,0.025),
+    0 4px 12px rgba(0,0,0,0.035),
+    0 0 0 1px rgba(0,0,0,0.04);
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-std: cubic-bezier(0.4, 0, 0.2, 1);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink-900);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+}
+.admin-shell {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px 96px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+@media (max-width: 1024px) {
+  .admin-shell { grid-template-columns: 1fr; }
+}
+.admin-header {
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
+}
+.admin-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.admin-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink-900);
+  margin: 0 0 6px;
+}
+.admin-sub {
+  font-size: 14.5px;
+  color: var(--ink-500);
+  letter-spacing: -0.005em;
+}
+.admin-banner {
+  grid-column: 1 / -1;
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-banner svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* === Forms column === */
+.admin-forms {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.card {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.card__heading {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-500);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.card__title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+.card__sub {
+  font-size: 12.5px;
+  color: var(--ink-500);
+  letter-spacing: -0.005em;
+  margin-top: -10px;
+}
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field__label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-700);
+  letter-spacing: -0.005em;
+}
+.input {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--r-input);
+  border: 1px solid var(--ink-200);
+  background: var(--surface);
+  padding: 0 14px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--ink-900);
+  outline: none;
+  transition: border-color 160ms var(--ease-std), box-shadow 160ms var(--ease-std);
+}
+.input:hover { border-color: var(--ink-300); }
+.input:focus {
+  border-color: var(--ink-900);
+  box-shadow: 0 0 0 4px rgba(10,10,10,0.08);
+}
+
+/* Type row: input + font select + color picker */
+.type-row {
+  display: grid;
+  grid-template-columns: 1fr 170px 140px;
+  gap: 8px;
+  align-items: stretch;
+}
+@media (max-width: 640px) {
+  .type-row { grid-template-columns: 1fr; }
+}
+.type-row__font { height: 42px; padding: 0 12px; cursor: pointer; }
+.type-row__color { height: 42px; padding: 6px 10px 6px 6px; }
+.type-row__color input[type="color"] { width: 28px; height: 28px; }
+.type-row__color .color-wrap__hex { font-size: 11.5px; }
+
+/* Radio chips for logo source */
+.chip-group {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  background: var(--ink-100);
+  padding: 4px;
+  border-radius: 12px;
+}
+.chip-group input[type="radio"] { display: none; }
+.chip-group label {
+  padding: 8px 10px;
+  border-radius: 9px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-600);
+  text-align: center;
+  cursor: pointer;
+  transition: all 200ms var(--ease-std);
+}
+.chip-group input:checked + label {
+  background: var(--surface);
+  color: var(--ink-900);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.05);
+}
+
+/* Color picker row */
+.color-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.color-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.color-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 8px 8px;
+  border: 1px solid var(--ink-200);
+  border-radius: var(--r-input);
+  background: var(--surface);
+  transition: border-color 160ms;
+}
+.color-wrap:hover { border-color: var(--ink-300); }
+.color-wrap input[type="color"] {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+}
+.color-wrap input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.color-wrap input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
+.color-wrap__hex {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--ink-700);
+  letter-spacing: 0.04em;
+}
+
+.color-preview {
+  height: 50px;
+  border-radius: var(--r-cta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.015em;
+  margin-top: 4px;
+  transition: background 240ms, color 240ms;
+}
+
+.btn {
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--ink-200);
+  background: var(--surface);
+  color: var(--ink-700);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 14px;
+  transition: all 160ms var(--ease-std);
+}
+.btn:hover { border-color: var(--ink-400); background: var(--surface-2); }
+.btn--primary {
+  background: var(--ink-900);
+  color: white;
+  border-color: var(--ink-900);
+}
+.btn--primary:hover { filter: brightness(1.18); background: var(--ink-900); }
+.btn--danger { color: var(--danger); }
+.btn--danger:hover { border-color: var(--danger); background: rgba(185,28,28,0.05); }
+
+/* Method toggle rows */
+.method-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  transition: background 160ms;
+}
+.method-row__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.method-row__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.005em;
+}
+.method-row__url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.method-row__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.copy-link {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--ink-200);
+  background: var(--surface);
+  color: var(--ink-600);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 160ms;
+}
+.copy-link:hover { color: var(--ink-900); border-color: var(--ink-300); }
+.copy-link[data-copied="true"] { background: var(--ink-900); color: white; border-color: var(--ink-900); }
+.copy-link svg { width: 14px; height: 14px; }
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle input { display: none; }
+.toggle__track {
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--ink-300);
+  position: relative;
+  transition: background 220ms var(--ease-std);
+}
+.toggle__track::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.20);
+  transition: transform 220ms var(--ease-spring, cubic-bezier(0.5, 1.4, 0.6, 1));
+}
+.toggle input:checked + .toggle__track {
+  background: var(--ink-900);
+}
+.toggle input:checked + .toggle__track::after {
+  transform: translateX(18px);
+}
+.toggle input:disabled + .toggle__track {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.toggle[data-locked="true"] { cursor: not-allowed; }
+.toggle[data-locked="true"] .toggle__track { background: var(--ink-700); }
+
+/* Actions row */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.actions .btn { flex: 1; height: 46px; font-size: 14px; }
+
+/* === Preview column === */
+.admin-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  max-height: calc(100vh - 48px);
+}
+@media (max-width: 1024px) { .admin-preview { position: static; max-height: none; } }
+.preview-frame-wrap {
+  background: var(--surface);
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 600px;
+}
+.preview-toolbar {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--ink-200);
+  font-size: 12.5px;
+  color: var(--ink-500);
+  background: var(--surface);
+}
+.preview-toolbar__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: var(--ink-900);
+}
+.preview-toolbar__url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.preview-toolbar select {
+  font-family: inherit;
+  font-size: 12px;
+  border: 1px solid var(--ink-200);
+  border-radius: 8px;
+  padding: 4px 8px;
+  background: var(--surface);
+  color: var(--ink-700);
+}
+.preview-iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: var(--bg);
+}
+
+/* Vecnet brand bottom */
+.admin-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--ink-500);
+  margin-top: 8px;
+}
+.vecnet-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-900);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.tonder-brand-mark .brand-mark__logo {
+  height: 20px;
+  width: auto;
+  display: block;
+}
+.vecnet-mark__icon {
+  width: 16px; height: 16px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--accent);
+}
+</style>
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <header class="admin-header">
+    <div class="admin-eyebrow">Tonder · Admin</div>
+    <h1 class="admin-title">Configuración del checkout</h1>
+    <div class="admin-sub">Personaliza la marca, los colores y los métodos de pago que verán tus clientes en el checkout hospedado.</div>
+  </header>
+
+  <div class="admin-banner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>Modo prototipo: la configuración se guarda solo en este navegador (localStorage). En producción se guardará en tu cuenta de Tonder.</span>
+  </div>
+
+  <!-- Forms column -->
+  <div class="admin-forms">
+
+    <!-- Brand card -->
+    <section class="card">
+      <div>
+        <div class="card__heading">01 · Marca</div>
+        <h2 class="card__title">Identidad del comercio</h2>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="cfgName">Nombre del comercio</label>
+        <div class="type-row">
+          <input class="input" id="cfgName" type="text" placeholder="Ej. Secretaría de Educación Pública" />
+          <select class="input type-row__font" id="cfgNameFont" aria-label="Tipografía"></select>
+          <div class="color-wrap type-row__color">
+            <input type="color" id="cfgNameColor" value="#7B1E3A" />
+            <span class="color-wrap__hex" id="cfgNameColorHex">#7B1E3A</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="cfgSubtitle">Subtítulo / descriptor</label>
+        <div class="type-row">
+          <input class="input" id="cfgSubtitle" type="text" placeholder="Ej. Cédula Profesional" />
+          <select class="input type-row__font" id="cfgSubFont" aria-label="Tipografía"></select>
+          <div class="color-wrap type-row__color">
+            <input type="color" id="cfgSubColor" value="#B98538" />
+            <span class="color-wrap__hex" id="cfgSubColorHex">#B98538</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label">Logo del comercio</label>
+        <div class="chip-group">
+          <input type="radio" name="logoType" id="logoSep" value="sep" />
+          <label for="logoSep">SEP (demo)</label>
+          <input type="radio" name="logoType" id="logoUrl" value="url" />
+          <label for="logoUrl">URL</label>
+          <input type="radio" name="logoType" id="logoData" value="data" />
+          <label for="logoData">Subir archivo</label>
+        </div>
+        <input class="input" id="cfgLogoUrl" type="url" placeholder="https://..." style="display:none; margin-top:8px;" />
+        <input id="cfgLogoFile" type="file" accept="image/*,.svg" style="display:none; margin-top:8px;" />
+      </div>
+    </section>
+
+    <!-- Colors card -->
+    <section class="card">
+      <div>
+        <div class="card__heading">02 · Colores</div>
+        <h2 class="card__title">Botón principal</h2>
+        <div class="card__sub" style="margin-top:6px;">Asegúrate de que el texto tenga contraste suficiente sobre el fondo.</div>
+      </div>
+
+      <div class="color-row">
+        <div class="color-field">
+          <label class="field__label" for="cfgPrimaryBg">Fondo</label>
+          <div class="color-wrap">
+            <input type="color" id="cfgPrimaryBg" value="#0A0A0A" />
+            <span class="color-wrap__hex" id="cfgPrimaryBgHex">#0A0A0A</span>
+          </div>
+        </div>
+        <div class="color-field">
+          <label class="field__label" for="cfgPrimaryText">Texto</label>
+          <div class="color-wrap">
+            <input type="color" id="cfgPrimaryText" value="#FFFFFF" />
+            <span class="color-wrap__hex" id="cfgPrimaryTextHex">#FFFFFF</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="color-preview" id="colorPreview">Pagar $1,050.00 MXN →</div>
+
+      <button type="button" class="btn" id="btnResetColors" style="align-self:flex-start;">Restablecer a negro</button>
+    </section>
+
+    <!-- Methods card -->
+    <section class="card">
+      <div>
+        <div class="card__heading">03 · Métodos de pago</div>
+        <h2 class="card__title">Qué métodos verá tu cliente</h2>
+        <div class="card__sub" style="margin-top:6px;">Activa al menos un método. Copia el enlace de cada método para abrir el checkout directamente con ese método (útil si tienes tu propio selector).</div>
+      </div>
+
+      <div id="methodRows" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </section>
+
+    <div class="actions">
+      <button type="button" class="btn" id="btnClearSavedCards" title="Borra las tarjetas guardadas en este navegador">Limpiar tarjetas guardadas</button>
+      <button type="button" class="btn btn--danger" id="btnReset">Restablecer</button>
+      <button type="button" class="btn btn--primary" id="btnSave">Guardar y previsualizar</button>
+    </div>
+  </div>
+
+  <!-- Preview column -->
+  <aside class="admin-preview">
+    <div class="preview-frame-wrap">
+      <div class="preview-toolbar">
+        <span class="preview-toolbar__title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/></svg>
+          Vista previa
+        </span>
+        <span class="preview-toolbar__url" id="previewUrlHint">tonder/index.html</span>
+        <select id="previewMode">
+          <option value="">Todos los métodos</option>
+          <option value="card">?method=card</option>
+          <option value="spei">?method=spei</option>
+          <option value="oxxo">?method=oxxo</option>
+          <option value="tienda">?method=tienda</option>
+        </select>
+      </div>
+      <iframe class="preview-iframe" id="previewIframe"></iframe>
+    </div>
+  </aside>
+
+  <footer class="admin-footer">
+    <span>Powered by</span>
+    <span class="vecnet-mark tonder-brand-mark">
+      <img src="tonder-logo.svg" alt="Tonder" class="brand-mark__logo" />
+    </span>
+  </footer>
+
+</div>
+
+<script>
+const CONFIG_KEY = 'tonderCheckoutConfig';
+const VALID_METHODS = ['card', 'spei', 'oxxo', 'tienda'];
+// Auto-detect checkout file: dev uses index.html, deploy uses index.html
+const CHECKOUT_PATH = /vecnet-pay-admin\.html$/.test(location.pathname) ? 'index.html' : 'index.html';
+const METHOD_LABELS = {
+  card: { name: 'Tarjeta', sub: 'Visa, Mastercard, Amex' },
+  spei: { name: 'SPEI', sub: 'Transferencia interbancaria' },
+  oxxo: { name: 'OXXO Pay', sub: 'Pago en efectivo en OXXO' },
+  tienda: { name: 'Tiendas de conveniencia', sub: '7-Eleven, Farmacias Guadalajara y +' },
+};
+const DEFAULT_CONFIG = {
+  brand: {
+    name: 'SEP', subtitle: 'Secretaría de Educación Pública',
+    nameFont: 'cinzel', nameColor: '#7B1E3A',
+    subtitleFont: 'inter', subtitleColor: '#B98538',
+    logoType: 'sep', logoSrc: null,
+  },
+  colors: { primaryBg: '#0A0A0A', primaryText: '#FFFFFF' },
+  methods: { card: true, spei: true, oxxo: true, tienda: true },
+};
+const FONT_OPTIONS = [
+  { key: 'inter',     label: 'Inter',             css: "'Inter', sans-serif" },
+  { key: 'cinzel',    label: 'Cinzel',            css: "'Cinzel', serif" },
+  { key: 'playfair',  label: 'Playfair Display',  css: "'Playfair Display', serif" },
+  { key: 'dm-serif',  label: 'DM Serif Display',  css: "'DM Serif Display', serif" },
+  { key: 'manrope',   label: 'Manrope',           css: "'Manrope', sans-serif" },
+];
+
+function populateFontSelect(sel, selectedKey) {
+  sel.innerHTML = '';
+  for (const opt of FONT_OPTIONS) {
+    const o = document.createElement('option');
+    o.value = opt.key;
+    o.textContent = opt.label;
+    o.style.fontFamily = opt.css;
+    if (opt.key === selectedKey) o.selected = true;
+    sel.appendChild(o);
+  }
+}
+
+function loadConfig() {
+  try { const raw = localStorage.getItem(CONFIG_KEY); if (raw) return Object.assign({}, DEFAULT_CONFIG, JSON.parse(raw)); }
+  catch (e) {}
+  return JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+}
+function saveConfig(cfg) {
+  // Sanitize data-url logos to avoid storing huge blobs (we still allow it; warn if > 200kB)
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
+}
+function clearConfig() { localStorage.removeItem(CONFIG_KEY); }
+
+let state = loadConfig();
+
+// === Render ===
+function render() {
+  document.getElementById('cfgName').value = state.brand.name || '';
+  document.getElementById('cfgSubtitle').value = state.brand.subtitle || '';
+  populateFontSelect(document.getElementById('cfgNameFont'), state.brand.nameFont || 'cinzel');
+  populateFontSelect(document.getElementById('cfgSubFont'), state.brand.subtitleFont || 'inter');
+  const nameColor = state.brand.nameColor || '#7B1E3A';
+  const subColor = state.brand.subtitleColor || '#B98538';
+  document.getElementById('cfgNameColor').value = nameColor;
+  document.getElementById('cfgSubColor').value = subColor;
+  document.getElementById('cfgNameColorHex').textContent = nameColor.toUpperCase();
+  document.getElementById('cfgSubColorHex').textContent = subColor.toUpperCase();
+  const logoType = state.brand.logoType || 'sep';
+  document.querySelector(`input[name="logoType"][value="${logoType}"]`).checked = true;
+  document.getElementById('cfgLogoUrl').style.display = logoType === 'url' ? '' : 'none';
+  document.getElementById('cfgLogoFile').style.display = logoType === 'data' ? '' : 'none';
+  if (logoType === 'url') document.getElementById('cfgLogoUrl').value = state.brand.logoSrc || '';
+
+  document.getElementById('cfgPrimaryBg').value = state.colors.primaryBg || '#0A0A0A';
+  document.getElementById('cfgPrimaryText').value = state.colors.primaryText || '#FFFFFF';
+  document.getElementById('cfgPrimaryBgHex').textContent = (state.colors.primaryBg || '#0A0A0A').toUpperCase();
+  document.getElementById('cfgPrimaryTextHex').textContent = (state.colors.primaryText || '#FFFFFF').toUpperCase();
+  const pv = document.getElementById('colorPreview');
+  pv.style.background = state.colors.primaryBg || '#0A0A0A';
+  pv.style.color = state.colors.primaryText || '#FFFFFF';
+
+  renderMethods();
+}
+
+function renderMethods() {
+  const container = document.getElementById('methodRows');
+  container.innerHTML = '';
+  const enabled = VALID_METHODS.filter(m => state.methods[m]);
+  const baseUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + CHECKOUT_PATH;
+  for (const m of VALID_METHODS) {
+    const isOn = !!state.methods[m];
+    const isLocked = isOn && enabled.length === 1;
+    const url = baseUrl + '?method=' + m;
+    const row = document.createElement('div');
+    row.className = 'method-row';
+    row.innerHTML = `
+      <div class="method-row__info">
+        <div class="method-row__name">${METHOD_LABELS[m].name}</div>
+        <div class="method-row__url" title="${url}">${url}</div>
+      </div>
+      <div class="method-row__right">
+        <button class="copy-link" data-copy-url="${url}" aria-label="Copiar enlace">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M3 16V5a2 2 0 0 1 2-2h11"/></svg>
+        </button>
+        <label class="toggle" data-locked="${isLocked}" title="${isLocked ? 'Al menos un método debe estar activo' : ''}">
+          <input type="checkbox" data-method="${m}" ${isOn ? 'checked' : ''} ${isLocked ? 'disabled' : ''} />
+          <span class="toggle__track"></span>
+        </label>
+      </div>
+    `;
+    container.appendChild(row);
+  }
+
+  // Wire up toggle changes
+  container.querySelectorAll('input[data-method]').forEach(inp => {
+    inp.addEventListener('change', e => {
+      state.methods[inp.dataset.method] = inp.checked;
+      renderMethods();
+      pushConfigToIframe();
+    });
+  });
+  // Wire up copy buttons
+  container.querySelectorAll('[data-copy-url]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(btn.dataset.copyUrl); }
+      catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = btn.dataset.copyUrl;
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+      }
+      btn.dataset.copied = 'true';
+      setTimeout(() => { btn.removeAttribute('data-copied'); }, 1200);
+    });
+  });
+}
+
+// === Push config to preview iframe (live, debounced) ===
+let pushTimer = null;
+function pushConfigToIframe() {
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(() => {
+    const iframe = document.getElementById('previewIframe');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ type: 'vecnet:config', payload: state }, '*');
+    }
+  }, 50);
+}
+
+// === Wire up inputs ===
+document.getElementById('cfgName').addEventListener('input', e => { state.brand.name = e.target.value; pushConfigToIframe(); });
+document.getElementById('cfgSubtitle').addEventListener('input', e => { state.brand.subtitle = e.target.value; pushConfigToIframe(); });
+document.getElementById('cfgNameFont').addEventListener('change', e => { state.brand.nameFont = e.target.value; pushConfigToIframe(); });
+document.getElementById('cfgSubFont').addEventListener('change', e => { state.brand.subtitleFont = e.target.value; pushConfigToIframe(); });
+document.getElementById('cfgNameColor').addEventListener('input', e => {
+  state.brand.nameColor = e.target.value;
+  document.getElementById('cfgNameColorHex').textContent = e.target.value.toUpperCase();
+  pushConfigToIframe();
+});
+document.getElementById('cfgSubColor').addEventListener('input', e => {
+  state.brand.subtitleColor = e.target.value;
+  document.getElementById('cfgSubColorHex').textContent = e.target.value.toUpperCase();
+  pushConfigToIframe();
+});
+document.querySelectorAll('input[name="logoType"]').forEach(r => {
+  r.addEventListener('change', e => {
+    state.brand.logoType = e.target.value;
+    if (e.target.value === 'sep') state.brand.logoSrc = null;
+    render();
+    pushConfigToIframe();
+  });
+});
+document.getElementById('cfgLogoUrl').addEventListener('input', e => { state.brand.logoSrc = e.target.value; pushConfigToIframe(); });
+document.getElementById('cfgLogoFile').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    state.brand.logoSrc = reader.result;
+    state.brand.logoType = 'data';
+    render();
+    pushConfigToIframe();
+  };
+  reader.readAsDataURL(f);
+});
+['cfgPrimaryBg', 'cfgPrimaryText'].forEach(id => {
+  document.getElementById(id).addEventListener('input', e => {
+    if (id === 'cfgPrimaryBg') state.colors.primaryBg = e.target.value;
+    else state.colors.primaryText = e.target.value;
+    render();
+    pushConfigToIframe();
+  });
+});
+document.getElementById('btnResetColors').addEventListener('click', () => {
+  state.colors.primaryBg = '#0A0A0A';
+  state.colors.primaryText = '#FFFFFF';
+  render();
+  pushConfigToIframe();
+});
+
+// === Save / Reset ===
+function reloadPreview() {
+  const iframe = document.getElementById('previewIframe');
+  const mode = document.getElementById('previewMode').value;
+  const params = new URLSearchParams({ preview: '1', t: String(Date.now()) });
+  if (mode) params.set('method', mode);
+  iframe.onload = () => {
+    // Re-apply in-memory state in case the merchant hasn't clicked Guardar yet
+    setTimeout(pushConfigToIframe, 80);
+  };
+  iframe.src = CHECKOUT_PATH + '?' + params.toString();
+  document.getElementById('previewUrlHint').textContent = CHECKOUT_PATH + '?' + (mode ? 'method=' + mode : 'all');
+}
+
+document.getElementById('btnSave').addEventListener('click', () => {
+  saveConfig(state);
+  reloadPreview();
+});
+document.getElementById('btnClearSavedCards').addEventListener('click', () => {
+  if (!confirm('¿Borrar todas las tarjetas guardadas en este navegador?')) return;
+  localStorage.removeItem('tonderSavedCards');
+  reloadPreview();
+});
+document.getElementById('btnReset').addEventListener('click', () => {
+  if (!confirm('¿Restablecer a la configuración por defecto?')) return;
+  clearConfig();
+  state = loadConfig();
+  render();
+  reloadPreview();
+});
+document.getElementById('previewMode').addEventListener('change', reloadPreview);
+
+render();
+reloadPreview();
+</script>
+
+</body>
+</html>
