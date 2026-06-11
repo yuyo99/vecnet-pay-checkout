@@ -1231,7 +1231,7 @@ a:hover { opacity: 0.65; }
   width: 72px;
   height: 72px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #1a1a1a, #050505);
+  background: linear-gradient(180deg, #15803D 0%, #166534 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1268,13 +1268,13 @@ a:hover { opacity: 0.65; }
 }
 @keyframes drawCheck { to { stroke-dashoffset: 0; } }
 
-/* Failure variant (X + red gradient pill) */
+/* Failure variant (X + neutral grey gradient pill) */
 .failure { display: none; }
 .failure[data-visible="true"] { display: flex; }
 .failure__check {
-  background: linear-gradient(180deg, #B91C1C 0%, #7F1D1D 100%);
+  background: linear-gradient(180deg, #71717A 0%, #52525B 100%);
 }
-.failure__check::after { border-color: rgba(185,28,28,0.18); }
+.failure__check::after { border-color: rgba(82,82,91,0.18); }
 .failure__check svg {
   width: 30px; height: 30px;
   stroke: white;
@@ -1860,7 +1860,6 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
             <span class="save-card-toggle__check"></span>
             <span class="save-card-toggle__text">
               <span class="save-card-toggle__main">Guardar esta tarjeta para futuras compras</span>
-              <span class="save-card-toggle__sub">Solo guardamos los últimos 4 dígitos y la fecha. Nunca el CVC.</span>
             </span>
           </label>
 
@@ -2032,7 +2031,7 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
       <div class="success__receipt-row"><span class="success__receipt-label">Fecha</span><span id="successDate">20 may 2026 · 19:03</span></div>
     </div>
     <div class="success__actions">
-      <button class="cta" onclick="resetCheckout()">
+      <button class="cta" onclick="downloadReceipt()">
         <span class="cta__label">Descargar comprobante</span>
       </button>
       <button class="btn-ghost" onclick="resetCheckout()">Volver al sitio del comercio</button>
@@ -2813,6 +2812,29 @@ function resetCheckout() {
   document.getElementById('payPanel').style.display = '';
   renderSavedCardsList();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function downloadReceipt() {
+  const cfg = window.__vecnetConfig || {};
+  const brand = (cfg.brand) || {};
+  const data = {
+    merchant: {
+      name: (document.getElementById('merchantName')?.textContent || brand.name || 'SEP'),
+      subtitle: (document.getElementById('merchantSubtitle')?.textContent || brand.subtitle || ''),
+      concept: 'Cédula Profesional',
+    },
+    payment: {
+      amount: '$1,050.00 MXN',
+      method: document.getElementById('successMethod').textContent,
+      authorization: document.getElementById('successAuth').textContent,
+      folio: document.getElementById('successFolio').textContent,
+      date: document.getElementById('successDate').textContent,
+      status: 'approved',
+    },
+  };
+  try { sessionStorage.setItem('vecnetReceiptData', JSON.stringify(data)); } catch (e) {}
+  const url = location.pathname.replace(/vecnet-pay-v2\.html$/, 'vecnet-pay-receipt.html').replace(/index\.html$/, 'receipt.html');
+  window.open(url, '_blank');
 }
 
 // Initial render on boot (after config has applied)
