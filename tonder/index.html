@@ -1617,7 +1617,7 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
     <span class="header__trust-copy">Pago seguro con</span>
-    <img src="tonder-logo.svg" alt="tonder" class="tonder-logo" />
+    <img src="/tonder/tonder-logo.svg" alt="tonder" class="tonder-logo" />
   </div>
 </header>
 
@@ -2774,7 +2774,11 @@ function downloadReceipt() {
     },
   };
   try { sessionStorage.setItem('tonderReceiptData', JSON.stringify(data)); } catch (e) {}
-  const url = location.pathname.replace(/vecnet-pay-v2\.html$/, 'receipt.html').replace(/index\.html$/, 'receipt.html');
+  // Handles both file URLs (/tonder/index.html) and Vercel clean URLs (/tonder)
+  const p = location.pathname;
+  const url = /\.html$/.test(p)
+    ? p.replace(/[^/]+\.html$/, 'receipt.html')
+    : (p.endsWith('/') ? p : p + '/') + 'receipt.html';
   window.open(url, '_blank');
 }
 

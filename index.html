@@ -2833,7 +2833,13 @@ function downloadReceipt() {
     },
   };
   try { sessionStorage.setItem('vecnetReceiptData', JSON.stringify(data)); } catch (e) {}
-  const url = location.pathname.replace(/vecnet-pay-v2\.html$/, 'vecnet-pay-receipt.html').replace(/index\.html$/, 'receipt.html');
+  // Handles local dev (/vecnet-pay-v2.html), deploy file URLs (/index.html),
+  // and Vercel clean URLs (/) — each maps to its receipt filename.
+  const p = location.pathname;
+  let url;
+  if (/vecnet-pay-v2\.html$/.test(p)) url = p.replace(/vecnet-pay-v2\.html$/, 'vecnet-pay-receipt.html');
+  else if (/\.html$/.test(p)) url = p.replace(/[^/]+\.html$/, 'receipt.html');
+  else url = (p.endsWith('/') ? p : p + '/') + 'receipt.html';
   window.open(url, '_blank');
 }
 
