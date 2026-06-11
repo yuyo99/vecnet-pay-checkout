@@ -71,10 +71,13 @@ body {
   align-items: center;
   gap: 8px;
 }
-.receipt__brand-logo {
-  height: 24px;
-  width: auto;
-  display: block;
+.tonder-wordmark {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.025em;
+  color: var(--ink-400);
+  line-height: 1;
 }
 
 .receipt__title-wrap { text-align: right; }
@@ -291,7 +294,7 @@ body {
 <div class="receipt" id="receipt">
   <header class="receipt__header">
     <div class="receipt__brand">
-      <img src="tonder-logo.svg" alt="Tonder" class="receipt__brand-logo" />
+      <span class="tonder-wordmark">tonder</span>
     </div>
     <div class="receipt__title-wrap">
       <div class="receipt__eyebrow">Comprobante de pago</div>
