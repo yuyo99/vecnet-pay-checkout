@@ -487,23 +487,6 @@ body[data-layout="cards"] .hero-band[data-active="true"] { display: block; }
   max-width: 540px;
   line-height: 1.55;
 }
-.hero-band__chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 22px;
-  padding: 7px 14px 7px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: #fff;
-  font-size: 11.5px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-}
-.hero-band__chip svg { width: 13px; height: 13px; opacity: 0.92; }
 .hero-band__decoration {
   position: absolute;
   right: -90px;
@@ -533,7 +516,6 @@ body[data-layout="cards"] .hero-band[data-active="true"] { display: block; }
   .hero-band { padding: 32px 18px 38px; }
   .hero-band__title { font-size: 28px; }
   .hero-band__subtitle { font-size: 13px; }
-  .hero-band__chip { margin-top: 18px; }
   .hero-band__decoration { width: 240px; height: 240px; right: -80px; bottom: -120px; }
   .hero-band__decoration::before { inset: 36px; }
   .hero-band__decoration::after { inset: 76px; }
@@ -2137,10 +2119,6 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
     <div class="hero-band__eyebrow" id="heroBandEyebrow">Pago en línea</div>
     <div class="hero-band__title" id="heroBandTitle">Realiza tu pago</div>
     <div class="hero-band__subtitle" id="heroBandSubtitle">Seleccione su método de pago preferido para continuar.</div>
-    <span class="hero-band__chip">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
-      Pago 100% Seguro · Encriptación SSL
-    </span>
   </div>
 </div>
 
