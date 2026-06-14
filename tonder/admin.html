@@ -570,10 +570,87 @@ html, body {
       <button type="button" class="btn" id="btnResetColors" style="align-self:flex-start;">Restablecer a negro</button>
     </section>
 
+    <!-- Design / layout card -->
+    <section class="card">
+      <div>
+        <div class="card__heading">03 · Diseño del checkout</div>
+        <h2 class="card__title">Cómo se presenta al cliente</h2>
+        <div class="card__sub" style="margin-top:6px;">Elige el formato del selector de métodos. Las dependencias del gobierno suelen usar el formato de tarjetas con una franja superior personalizada.</div>
+      </div>
+
+      <div class="field">
+        <label class="field__label">Disposición de métodos</label>
+        <div class="chip-group" style="grid-template-columns: 1fr 1fr;">
+          <input type="radio" name="layout" id="layoutTabs" value="tabs" />
+          <label for="layoutTabs">Pestañas (recomendado)</label>
+          <input type="radio" name="layout" id="layoutCards" value="cards" />
+          <label for="layoutCards">Tarjetas (estilo gobierno)</label>
+        </div>
+      </div>
+
+      <fieldset id="heroFieldset" style="border:1px solid var(--ink-200); border-radius:14px; padding:14px 16px; display:flex; flex-direction:column; gap:12px; margin:0;">
+        <legend style="font-size:11px; font-weight:700; color:var(--ink-500); letter-spacing:0.08em; text-transform:uppercase; padding:0 6px;">Franja superior</legend>
+
+        <div class="field">
+          <label class="field__label" for="cfgHeroBg">Color de fondo</label>
+          <div class="color-wrap">
+            <input type="color" id="cfgHeroBg" value="#7B1E3A" />
+            <span class="color-wrap__hex" id="cfgHeroBgHex">#7B1E3A</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="cfgHeroTitle">Título</label>
+          <input class="input" id="cfgHeroTitle" type="text" placeholder="Ej. Pago en Línea" />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="cfgHeroSub">Subtítulo</label>
+          <textarea class="input" id="cfgHeroSub" rows="2" placeholder="Ej. Seleccione su método de pago preferido para continuar." style="resize:vertical; min-height:60px; padding:10px 12px; line-height:1.45; font-family:inherit;"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field__label">Adorno decorativo</label>
+          <div class="chip-group" style="grid-template-columns: 1fr 1fr;">
+            <input type="radio" name="heroDec" id="heroDecNone" value="none" />
+            <label for="heroDecNone">Ninguno</label>
+            <input type="radio" name="heroDec" id="heroDecCircle" value="circle" />
+            <label for="heroDecCircle">Círculo</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset style="border:1px solid var(--ink-200); border-radius:14px; padding:14px 16px; display:flex; flex-direction:column; gap:12px; margin:0;">
+        <legend style="font-size:11px; font-weight:700; color:var(--ink-500); letter-spacing:0.08em; text-transform:uppercase; padding:0 6px;">Marca secundaria</legend>
+
+        <div class="field">
+          <label class="field__label" for="cfgSmLabel">Etiqueta</label>
+          <input class="input" id="cfgSmLabel" type="text" placeholder="Ej. POWERED BY BC.GAME" />
+        </div>
+
+        <div class="color-row">
+          <div class="color-field">
+            <label class="field__label" for="cfgSmBg">Fondo</label>
+            <div class="color-wrap">
+              <input type="color" id="cfgSmBg" value="#FED7AA" />
+              <span class="color-wrap__hex" id="cfgSmBgHex">#FED7AA</span>
+            </div>
+          </div>
+          <div class="color-field">
+            <label class="field__label" for="cfgSmColor">Texto</label>
+            <div class="color-wrap">
+              <input type="color" id="cfgSmColor" value="#9A3412" />
+              <span class="color-wrap__hex" id="cfgSmColorHex">#9A3412</span>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+
     <!-- Methods card -->
     <section class="card">
       <div>
-        <div class="card__heading">03 · Métodos de pago</div>
+        <div class="card__heading">04 · Métodos de pago</div>
         <h2 class="card__title">Qué métodos verá tu cliente</h2>
         <div class="card__sub" style="margin-top:6px;">Activa al menos un método. Copia el enlace de cada método para abrir el checkout directamente con ese método (útil si tienes tu propio selector).</div>
       </div>
@@ -636,6 +713,9 @@ const DEFAULT_CONFIG = {
   },
   colors: { primaryBg: '#0A0A0A', primaryText: '#FFFFFF' },
   methods: { card: true, spei: true, oxxo: true, tienda: true },
+  layout: 'tabs',
+  hero: { bg: '#0EA5E9', title: 'Pago en Línea', subtitle: 'Seleccione su método de pago preferido para continuar.', decoration: 'none' },
+  secondaryMark: { label: '', bg: '#FED7AA', color: '#9A3412' },
 };
 const FONT_OPTIONS = [
   { key: 'inter',     label: 'Inter',             css: "'Inter', sans-serif" },
@@ -695,6 +775,30 @@ function render() {
   const pv = document.getElementById('colorPreview');
   pv.style.background = state.colors.primaryBg || '#0A0A0A';
   pv.style.color = state.colors.primaryText || '#FFFFFF';
+
+  // Layout / hero / secondary mark
+  state.hero = state.hero || { ...DEFAULT_CONFIG.hero };
+  state.secondaryMark = state.secondaryMark || { ...DEFAULT_CONFIG.secondaryMark };
+  state.layout = state.layout || 'tabs';
+
+  const layoutInput = document.querySelector(`input[name="layout"][value="${state.layout}"]`);
+  if (layoutInput) layoutInput.checked = true;
+
+  document.getElementById('cfgHeroBg').value = state.hero.bg || '#0EA5E9';
+  document.getElementById('cfgHeroBgHex').textContent = (state.hero.bg || '#0EA5E9').toUpperCase();
+  document.getElementById('cfgHeroTitle').value = state.hero.title || '';
+  document.getElementById('cfgHeroSub').value = state.hero.subtitle || '';
+  const decInput = document.querySelector(`input[name="heroDec"][value="${state.hero.decoration || 'none'}"]`);
+  if (decInput) decInput.checked = true;
+
+  document.getElementById('cfgSmLabel').value = state.secondaryMark.label || '';
+  document.getElementById('cfgSmBg').value = state.secondaryMark.bg || '#FED7AA';
+  document.getElementById('cfgSmBgHex').textContent = (state.secondaryMark.bg || '#FED7AA').toUpperCase();
+  document.getElementById('cfgSmColor').value = state.secondaryMark.color || '#9A3412';
+  document.getElementById('cfgSmColorHex').textContent = (state.secondaryMark.color || '#9A3412').toUpperCase();
+
+  const heroFs = document.getElementById('heroFieldset');
+  if (heroFs) heroFs.style.opacity = state.layout === 'cards' ? '1' : '0.55';
 
   renderMethods();
 }
@@ -811,6 +915,56 @@ document.getElementById('btnResetColors').addEventListener('click', () => {
   state.colors.primaryBg = '#0A0A0A';
   state.colors.primaryText = '#FFFFFF';
   render();
+  pushConfigToIframe();
+});
+
+// Layout / hero / secondary mark listeners
+document.querySelectorAll('input[name="layout"]').forEach(r => {
+  r.addEventListener('change', e => {
+    state.layout = e.target.value;
+    const heroFs = document.getElementById('heroFieldset');
+    if (heroFs) heroFs.style.opacity = state.layout === 'cards' ? '1' : '0.55';
+    pushConfigToIframe();
+  });
+});
+document.getElementById('cfgHeroBg').addEventListener('input', e => {
+  state.hero = state.hero || {};
+  state.hero.bg = e.target.value;
+  document.getElementById('cfgHeroBgHex').textContent = e.target.value.toUpperCase();
+  pushConfigToIframe();
+});
+document.getElementById('cfgHeroTitle').addEventListener('input', e => {
+  state.hero = state.hero || {};
+  state.hero.title = e.target.value;
+  pushConfigToIframe();
+});
+document.getElementById('cfgHeroSub').addEventListener('input', e => {
+  state.hero = state.hero || {};
+  state.hero.subtitle = e.target.value;
+  pushConfigToIframe();
+});
+document.querySelectorAll('input[name="heroDec"]').forEach(r => {
+  r.addEventListener('change', e => {
+    state.hero = state.hero || {};
+    state.hero.decoration = e.target.value;
+    pushConfigToIframe();
+  });
+});
+document.getElementById('cfgSmLabel').addEventListener('input', e => {
+  state.secondaryMark = state.secondaryMark || {};
+  state.secondaryMark.label = e.target.value;
+  pushConfigToIframe();
+});
+document.getElementById('cfgSmBg').addEventListener('input', e => {
+  state.secondaryMark = state.secondaryMark || {};
+  state.secondaryMark.bg = e.target.value;
+  document.getElementById('cfgSmBgHex').textContent = e.target.value.toUpperCase();
+  pushConfigToIframe();
+});
+document.getElementById('cfgSmColor').addEventListener('input', e => {
+  state.secondaryMark = state.secondaryMark || {};
+  state.secondaryMark.color = e.target.value;
+  document.getElementById('cfgSmColorHex').textContent = e.target.value.toUpperCase();
   pushConfigToIframe();
 });
 

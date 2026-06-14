@@ -377,6 +377,213 @@ a:hover { opacity: 0.65; }
   letter-spacing: -0.005em;
 }
 
+/* === Hero band (cards layout, gov-style) === */
+.hero-band {
+  display: none;
+  background: var(--hero-bg, #0EA5E9);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  padding: 38px 40px 42px;
+}
+body[data-layout="cards"] .hero-band[data-active="true"] { display: block; }
+.hero-band__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.hero-band__eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.78);
+  margin-bottom: 10px;
+}
+.hero-band__title {
+  font-family: var(--brand-name-font, 'Cinzel', 'Playfair Display', serif);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  color: #fff;
+}
+.hero-band__subtitle {
+  margin-top: 12px;
+  font-size: 14.5px;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  color: rgba(255,255,255,0.86);
+  max-width: 540px;
+  line-height: 1.5;
+}
+.hero-band__decoration {
+  position: absolute;
+  right: -70px;
+  bottom: -130px;
+  width: 300px;
+  height: 300px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,0.22);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-band__decoration::before {
+  content: '';
+  position: absolute;
+  inset: 36px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,0.14);
+}
+@media (max-width: 920px) {
+  .hero-band { padding: 28px 18px 32px; }
+  .hero-band__title { font-size: 26px; }
+  .hero-band__subtitle { font-size: 13px; }
+  .hero-band__decoration { width: 200px; height: 200px; right: -60px; bottom: -100px; }
+}
+
+/* === Secondary mark (sub-brand pill in header trust row) === */
+.secondary-mark {
+  display: none;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--secondary-mark-bg, #FED7AA);
+  color: var(--secondary-mark-color, #9A3412);
+  margin-right: 10px;
+  line-height: 1;
+}
+.secondary-mark[data-active="true"] { display: inline-flex; }
+@media (max-width: 600px) {
+  .secondary-mark[data-active="true"] { display: none; }
+}
+
+/* === Cards layout switches === */
+body[data-layout="cards"] .tabs { display: none !important; }
+body[data-layout="cards"] .hero { display: none; }
+body[data-layout="cards"]:not([data-card-selected="true"]) .panel { display: none !important; }
+
+/* === Method card grid === */
+.method-grid {
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+body[data-layout="cards"] .method-grid { display: grid; }
+.method-card {
+  background: var(--surface);
+  border: 1px solid var(--ink-200);
+  border-radius: 18px;
+  padding: 20px 18px 18px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  transition: transform 200ms var(--ease-std), box-shadow 200ms var(--ease-std), border-color 200ms var(--ease-std);
+  text-align: left;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  color: inherit;
+}
+.method-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  border-color: var(--ink-300);
+}
+.method-card[data-selected="true"] {
+  border-color: var(--ink-900);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08), 0 0 0 1px var(--ink-900);
+}
+.method-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.method-card__icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.method-card__icon svg { width: 22px; height: 22px; }
+.method-card[data-method="card"]   .method-card__icon { background: rgba(59,130,246,0.10); color: #3B82F6; }
+.method-card[data-method="spei"]   .method-card__icon { background: rgba(21,128,61,0.12); color: #15803D; }
+.method-card[data-method="oxxo"]   .method-card__icon { background: rgba(220,38,38,0.10); color: #DC2626; }
+.method-card[data-method="tienda"] .method-card__icon { background: rgba(124,58,237,0.10); color: #7C3AED; }
+.method-card__radio {
+  width: 20px; height: 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--ink-300);
+  flex-shrink: 0;
+  position: relative;
+  transition: all 180ms var(--ease-std);
+}
+.method-card[data-selected="true"] .method-card__radio {
+  background: var(--ink-900);
+  border-color: var(--ink-900);
+}
+.method-card[data-selected="true"] .method-card__radio::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  background: #fff;
+  border-radius: 999px;
+}
+.method-card__title {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--ink-900);
+  letter-spacing: -0.01em;
+}
+.method-card__desc {
+  font-size: 12.5px;
+  color: var(--ink-500);
+  line-height: 1.45;
+}
+@media (max-width: 640px) {
+  .method-grid { grid-template-columns: 1fr; }
+}
+
+/* === Disabled CTA when no card is selected === */
+.cards-cta-stub { display: none; }
+body[data-layout="cards"]:not([data-card-selected="true"]) .cards-cta-stub { display: flex; flex-direction: column; gap: 10px; }
+.cards-cta-stub .cta {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.cards-cta-stub .cta__hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-500);
+}
+
+/* === Security pill (sidebar, cards mode) === */
+.security-pill {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--ink-700);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  margin-top: 4px;
+}
+.security-pill svg { width: 14px; height: 14px; color: var(--success); flex-shrink: 0; }
+body[data-layout="cards"] .security-pill { display: flex; }
+
 /* Express row */
 /* Method tabs */
 .tabs {
@@ -1658,6 +1865,7 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
     <span class="header__trust-copy">Pago seguro con</span>
+    <span class="secondary-mark" id="secondaryMark" data-active="false"></span>
     <span class="vecnet-mark">
       <span class="vecnet-mark__icon">
         <svg viewBox="0 0 100 100" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linecap="round">
@@ -1679,6 +1887,16 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
     </span>
   </div>
 </header>
+
+<!-- Hero band (cards layout only) -->
+<div class="hero-band" id="heroBand" data-active="false">
+  <div class="hero-band__decoration" id="heroBandDecoration" style="display:none;"></div>
+  <div class="hero-band__inner">
+    <div class="hero-band__eyebrow" id="heroBandEyebrow">Pago en línea</div>
+    <div class="hero-band__title" id="heroBandTitle">Realiza tu pago</div>
+    <div class="hero-band__subtitle" id="heroBandSubtitle">Seleccione su método de pago preferido para continuar.</div>
+  </div>
+</div>
 
 <!-- Canvas -->
 <main class="canvas">
@@ -1718,6 +1936,50 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 13h6"/></svg>
         Tienda
       </button>
+    </div>
+
+    <!-- Method grid (cards layout) -->
+    <div class="method-grid fade-in" id="methodGrid" data-delay="3">
+      <button type="button" class="method-card" data-method="card" data-selected="false">
+        <div class="method-card__head">
+          <span class="method-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/><path d="M6 15h3"/></svg></span>
+          <span class="method-card__radio"></span>
+        </div>
+        <div class="method-card__title">Tarjeta de crédito o débito</div>
+        <div class="method-card__desc">Visa, Mastercard y American Express. Verificación 3-D Secure con tu banco.</div>
+      </button>
+      <button type="button" class="method-card" data-method="spei" data-selected="false">
+        <div class="method-card__head">
+          <span class="method-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10h18M3 10L12 4l9 6M5 10v9M19 10v9M9 10v9M15 10v9M3 19h18"/></svg></span>
+          <span class="method-card__radio"></span>
+        </div>
+        <div class="method-card__title">Transferencia SPEI</div>
+        <div class="method-card__desc">Paga desde tu banca en línea con una CLABE. Confirmación en minutos.</div>
+      </button>
+      <button type="button" class="method-card" data-method="oxxo" data-selected="false">
+        <div class="method-card__head">
+          <span class="method-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8v12h16V8"/><path d="M3 8l2-3h14l2 3z"/><path d="M10 20v-4a2 2 0 0 1 4 0v4"/></svg></span>
+          <span class="method-card__radio"></span>
+        </div>
+        <div class="method-card__title">OXXO Pay</div>
+        <div class="method-card__desc">Genera una referencia y paga en efectivo en cualquier OXXO del país.</div>
+      </button>
+      <button type="button" class="method-card" data-method="tienda" data-selected="false">
+        <div class="method-card__head">
+          <span class="method-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 13h6"/></svg></span>
+          <span class="method-card__radio"></span>
+        </div>
+        <div class="method-card__title">Tiendas de conveniencia</div>
+        <div class="method-card__desc">7-Eleven, Farmacias Guadalajara, Círculo K y más. Paga en efectivo cerca de ti.</div>
+      </button>
+    </div>
+
+    <!-- Disabled CTA stub (cards layout, no method selected) -->
+    <div class="cards-cta-stub">
+      <button type="button" class="cta" disabled>
+        <span class="cta__label">Seleccione un método de pago</span>
+      </button>
+      <div class="cta__hint">Elige una opción arriba para continuar</div>
     </div>
 
     <!-- Method panels -->
@@ -2111,6 +2373,11 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
             <div class="summary__total-currency">MXN</div>
           </div>
         </div>
+
+        <div class="security-pill" aria-hidden="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+          Transacción encriptada y segura
+        </div>
       </div>
     </details>
   </aside>
@@ -2147,6 +2414,9 @@ const DEFAULT_CONFIG = {
   },
   colors: { primaryBg: '', primaryText: '' },
   methods: { card: true, spei: true, oxxo: true, tienda: true },
+  layout: 'tabs',
+  hero: { bg: '', title: '', subtitle: '', decoration: 'none' },
+  secondaryMark: { label: '', bg: '', color: '' },
 };
 const CONFIG_KEY = 'vecnetPayCheckoutConfig';
 const VALID_METHODS = ['card', 'spei', 'oxxo', 'tienda'];
@@ -2181,7 +2451,7 @@ function deepMerge(a, b) {
 
 function parseURLConfig() {
   const p = new URLSearchParams(window.location.search);
-  const out = { brand: {}, colors: {}, methods: {} };
+  const out = { brand: {}, colors: {}, methods: {}, hero: {}, secondaryMark: {} };
   if (p.has('name')) out.brand.name = p.get('name');
   if (p.has('subtitle')) out.brand.subtitle = p.get('subtitle');
   if (p.has('logo')) { out.brand.logoType = 'url'; out.brand.logoSrc = p.get('logo'); }
@@ -2191,6 +2461,14 @@ function parseURLConfig() {
   if (p.has('subColor')) out.brand.subtitleColor = p.get('subColor');
   if (p.has('primary')) out.colors.primaryBg = p.get('primary');
   if (p.has('primaryText')) out.colors.primaryText = p.get('primaryText');
+  if (p.has('layout')) out.layout = p.get('layout') === 'cards' ? 'cards' : 'tabs';
+  if (p.has('heroBg')) out.hero.bg = p.get('heroBg');
+  if (p.has('heroTitle')) out.hero.title = p.get('heroTitle');
+  if (p.has('heroSub')) out.hero.subtitle = p.get('heroSub');
+  if (p.has('heroDec')) out.hero.decoration = p.get('heroDec');
+  if (p.has('smLabel')) out.secondaryMark.label = p.get('smLabel');
+  if (p.has('smBg')) out.secondaryMark.bg = p.get('smBg');
+  if (p.has('smColor')) out.secondaryMark.color = p.get('smColor');
   if (p.has('method')) {
     const m = p.get('method');
     if (VALID_METHODS.includes(m)) {
@@ -2230,28 +2508,88 @@ function applyColors(colors) {
 
 function applyMethodVisibility(methods) {
   const enabled = VALID_METHODS.filter(m => methods[m]);
-  // Hide tab + panel for any disabled method
   document.querySelectorAll('.tab').forEach(t => {
     t.style.display = methods[t.dataset.tab] ? '' : 'none';
+  });
+  document.querySelectorAll('.method-card').forEach(c => {
+    c.style.display = methods[c.dataset.method] ? '' : 'none';
   });
   document.querySelectorAll('.panel').forEach(p => {
     if (!methods[p.dataset.panel]) p.style.display = 'none';
   });
-  // If only one method enabled, hide the tab strip entirely + activate that panel
+
+  const isCards = document.body.dataset.layout === 'cards';
+  if (isCards) return; // tabs strip + auto-activation skipped in cards mode
+
   const tabsEl = document.querySelector('.tabs');
   if (enabled.length === 1) {
     if (tabsEl) tabsEl.style.display = 'none';
     document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === enabled[0]));
     document.querySelectorAll('.panel').forEach(p => p.setAttribute('data-active', p.dataset.panel === enabled[0]));
   } else if (enabled.length > 1) {
-    // Ensure the first-enabled tab is active if the current active is disabled
+    if (tabsEl) tabsEl.style.display = '';
     const activeTab = document.querySelector('.tab[aria-selected="true"]');
-    if (!activeTab || !methods[activeTab.dataset.tab]) {
+    if (!activeTab || activeTab.style.display === 'none' || !methods[activeTab.dataset.tab]) {
       document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === enabled[0]));
       document.querySelectorAll('.panel').forEach(p => p.setAttribute('data-active', p.dataset.panel === enabled[0]));
     }
   }
 }
+
+function applyLayout(layout, methods) {
+  const body = document.body;
+  const next = (layout === 'cards') ? 'cards' : 'tabs';
+  body.dataset.layout = next;
+  if (next === 'cards') {
+    document.querySelectorAll('.panel').forEach(p => p.setAttribute('data-active', 'false'));
+    document.querySelectorAll('.method-card').forEach(c => c.setAttribute('data-selected', 'false'));
+    body.dataset.cardSelected = 'false';
+  } else {
+    body.removeAttribute('data-card-selected');
+    const enabled = VALID_METHODS.filter(m => methods && methods[m]);
+    const first = enabled[0] || 'card';
+    document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === first));
+    document.querySelectorAll('.panel').forEach(p => p.setAttribute('data-active', p.dataset.panel === first));
+  }
+}
+
+function applyHero(hero) {
+  const band = document.getElementById('heroBand');
+  const title = document.getElementById('heroBandTitle');
+  const sub = document.getElementById('heroBandSubtitle');
+  const dec = document.getElementById('heroBandDecoration');
+  if (!band) return;
+  const hasContent = !!(hero && (hero.bg || hero.title || hero.subtitle));
+  if (hero && hero.bg) document.documentElement.style.setProperty('--hero-bg', hero.bg);
+  band.setAttribute('data-active', hasContent ? 'true' : 'false');
+  if (title) title.textContent = (hero && hero.title) || 'Realiza tu pago';
+  if (sub) sub.textContent = (hero && hero.subtitle) || '';
+  if (dec) dec.style.display = (hero && hero.decoration === 'circle') ? '' : 'none';
+}
+
+function applySecondaryMark(sm) {
+  const el = document.getElementById('secondaryMark');
+  if (!el) return;
+  if (sm && sm.label) {
+    el.textContent = sm.label;
+    if (sm.bg) document.documentElement.style.setProperty('--secondary-mark-bg', sm.bg);
+    if (sm.color) document.documentElement.style.setProperty('--secondary-mark-color', sm.color);
+    el.setAttribute('data-active', 'true');
+  } else {
+    el.setAttribute('data-active', 'false');
+    el.textContent = '';
+  }
+}
+
+function selectMethodCard(method) {
+  document.querySelectorAll('.method-card').forEach(c => c.setAttribute('data-selected', c.dataset.method === method ? 'true' : 'false'));
+  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', t.dataset.tab === method));
+  document.querySelectorAll('.panel').forEach(p => p.setAttribute('data-active', p.dataset.panel === method ? 'true' : 'false'));
+  document.body.dataset.cardSelected = 'true';
+}
+document.querySelectorAll('.method-card').forEach(c => {
+  c.addEventListener('click', () => selectMethodCard(c.dataset.method));
+});
 
 (function initConfig() {
   const stored = loadStoredConfig();
@@ -2259,6 +2597,9 @@ function applyMethodVisibility(methods) {
   const cfg = deepMerge(deepMerge(DEFAULT_CONFIG, stored), url);
   applyBrand(cfg.brand);
   applyColors(cfg.colors);
+  applyLayout(cfg.layout, cfg.methods);
+  applyHero(cfg.hero);
+  applySecondaryMark(cfg.secondaryMark);
   applyMethodVisibility(cfg.methods);
   window.__vecnetConfig = cfg;
 })();
@@ -2270,6 +2611,9 @@ window.addEventListener('message', e => {
   const cfg = deepMerge(DEFAULT_CONFIG, data.payload);
   applyBrand(cfg.brand || {});
   applyColors(cfg.colors || {});
+  applyLayout(cfg.layout, cfg.methods || DEFAULT_CONFIG.methods);
+  applyHero(cfg.hero || {});
+  applySecondaryMark(cfg.secondaryMark || {});
   applyMethodVisibility(cfg.methods || DEFAULT_CONFIG.methods);
   window.__vecnetConfig = cfg;
 });
