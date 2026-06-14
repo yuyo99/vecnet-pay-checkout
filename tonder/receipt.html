@@ -4,6 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Comprobante de pago · Tonder</title>
+<script>
+  window.__PAGES_BASE = (location.hostname.endsWith('github.io')
+    ? '/' + location.pathname.split('/')[1] + '/'
+    : '/');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -294,7 +299,8 @@ body {
 <div class="receipt" id="receipt">
   <header class="receipt__header">
     <div class="receipt__brand">
-      <img src="/tonder/tonder-logo.svg" alt="tonder" class="tonder-logo" />
+      <img alt="tonder" class="tonder-logo" id="tonderLogoMark" />
+      <script>document.getElementById('tonderLogoMark').src = window.__PAGES_BASE + 'tonder/tonder-logo.svg';</script>
     </div>
     <div class="receipt__title-wrap">
       <div class="receipt__eyebrow">Comprobante de pago</div>

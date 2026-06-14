@@ -4,6 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Pagar · BC.GAME · Tonder</title>
+<script>
+  // Path-base shim — Vercel root `/` vs GitHub Pages project `/vecnet-pay-checkout/`
+  window.__PAGES_BASE = (location.hostname.endsWith('github.io')
+    ? '/' + location.pathname.split('/')[1] + '/'
+    : '/');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
@@ -2073,7 +2079,8 @@ html { scroll-behavior: smooth; scroll-padding-bottom: 180px; }
     </svg>
     <span class="header__trust-copy">Pago seguro con</span>
     <span class="secondary-mark" id="secondaryMark" data-active="false"></span>
-    <img src="/tonder/tonder-logo.svg" alt="tonder" class="tonder-logo" />
+    <img alt="tonder" class="tonder-logo" id="tonderLogoMark" />
+    <script>document.getElementById('tonderLogoMark').src = window.__PAGES_BASE + 'tonder/tonder-logo.svg';</script>
   </div>
 </header>
 
